@@ -1,0 +1,150 @@
+<div class="container" *ngIf="!submitPreview">
+	<div class="row">
+		<div class="col-md-12" style="text-align:center">
+			<h1>Build Your Form</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" style="text-align:center">
+			<mat-card>
+				<mat-card-header>
+					<div fxLayout="row" fxLayoutWrap="wrap" fxFlex="100">
+						<div fxFlex="100" fxFlex.gt-xs="100" class="pr-1">
+							<!-- Form titl -->
+							<mat-form-field class="full-width">
+								<input 
+									matInput 
+									placeholder="Form Title" 
+									[(ngModel)]="title">
+							</mat-form-field>	
+						</div>
+					</div>
+				</mat-card-header>
+			</mat-card>
+		</div>
+	</div>
+	<div class="row" *ngFor="let element of formElements">
+		<div class="col-md-12">
+			<!-- Divide elements from selected controlType -->
+			<mat-card [ngSwitch]="element.controlType">
+				<mat-card-header>
+					<div fxLayout="row" fxLayoutWrap="wrap" fxFlex="100">
+						<div fxFlex="100" fxFlex.gt-xs="70" class="pr-1">
+
+							<!-- placeholder value for each question -->
+							<mat-form-field class="full-width">
+								<input 
+									matInput 
+									placeholder="Placeholer Value" 
+									value="{{ element.placeholder }}"
+									[(ngModel)]="element.placeholder">
+							</mat-form-field>	
+						</div>
+						<div fxFlex="100" fxFlex.gt-xs="30" class="pr-1"> 
+							<!-- select desired question type -->
+							<mat-form-field class="full-width">
+								<mat-select placeholder="Select Type" 
+									(change)="onTypeChange($event, element)"
+									[(ngModel)]="element.controlType">
+									<mat-option *ngFor="let type of types" [value]="type.type">
+										<ng-container>
+											<mat-icon>{{ type.icon }}</mat-icon>
+										</ng-container>
+										{{ type.value }}
+									</mat-option>
+								</mat-select>
+							</mat-form-field>	
+						</div>
+					</div>
+				<!-- end of card-header -->
+				</mat-card-header>
+				<mat-divider></mat-divider>
+				<mat-card-content>
+					<div fxLayout="row" fxLayoutWrap="wrap" fxFlex="100">
+						<div fxFlex="100" fxFlex.gt-xs="100" class="pr-1">
+							<!-- form Textbox -->
+							<mat-form-field class="full-width" *ngSwitchCase="'textbox'">
+								<input 
+									matInput 
+									placeholder="Short Answer Text" 
+									disabled>
+							</mat-form-field>	
+							<!-- form Textarea -->
+							<mat-form-field class="full-width" *ngSwitchCase="'textarea'">
+								<input 
+									matInput 
+									placeholder="Long Answer Text" 
+									disabled>
+							</mat-form-field>	
+							<!-- form Datepicker -->
+							<mat-form-field class="full-width" *ngSwitchCase="'datepicker'">
+								<input 
+									matInput 
+									[matDatepicker]="dp1" 
+									placeholder="Month / Day / Year" 
+									disabled>
+								<mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
+								<mat-datepicker #dp1></mat-datepicker>
+							</mat-form-field>
+						</div>
+					</div>
+				<!-- End of card-content -->
+				</mat-card-content>
+				<mat-divider></mat-divider>
+				<mat-card-actions style="text-align: center;">
+					<button mat-icon-button matTooltip="Delete"
+						(click)="removeElement(element)">
+						<mat-icon>delete</mat-icon>
+					</button>
+					<span style="border-left: 1px solid #e0e0e0;
+						height: 32px;
+						margin: 0 16px;
+						width: 0;">
+					</span>
+					<mat-slide-toggle
+						[checked]="element.required"
+						(change)="requiredElement(element)">Required
+					</mat-slide-toggle>
+				</mat-card-actions>
+			</mat-card>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" style="text-align: center;padding-top: 20px;">
+			<button mat-raised-button color="primary" (click)="submitPreview = true">Preview</button>
+		</div>
+	</div>
+	<div id="app-customizer">
+		<div class="handle">
+			<button 
+				mat-fab
+				color="warn" 
+				(click)="addItem()"
+				matTooltip="Add Question">
+				<mat-icon>add</mat-icon>
+			</button>
+		</div>
+	</div>
+</div>
+<div class="container" *ngIf="submitPreview">
+	<div class="row">
+		<div class="col-md-12" style="text-align:center">
+			<h1>Preview Form</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<mat-card class="preview">
+				<app-dynamic-form
+					[title]="title"
+					[formElements]="formElements">
+				</app-dynamic-form>
+			</mat-card>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" style="text-align: center;padding-top: 20px;">
+			<button mat-raised-button color="primary" (click)="submitPreview = false">Edit</button>
+		</div>
+	</div>
+</div>
