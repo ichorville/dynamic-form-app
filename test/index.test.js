@@ -14,25 +14,25 @@ describe('#IDF Library Test', function () {
 
 	describe('#Element Selector', function () {
 		it('should be an object', function () {
-			ghost('div').selector.should.be.an('object');
+			idf('div').selector.should.be.an('object');
 		});
 	});
 
 	describe('#DivContent', function () {
 		it('should be a string', function () {
-			ghost('div').html().should.be.a('string');
+			idf('div').html().should.be.a('string');
 		});
 
 		it('should equal Sample text in div', function () {
-			ghost('div').html().should.equal('Sample text in div');
+			idf('div').html().should.equal('Sample text in div');
 		});
 
 		it('should equal paragraph text', function () {
-			ghost('div').html('<p>changed value</p>').should.equal('<p>changed value</p>');
+			idf('div').html('<p>changed value</p>').should.equal('<p>changed value</p>');
 		});
 
 		it('should equal empty string', function () {
-			ghost('div').html('').should.equal('');
+			idf('div').html('').should.equal('');
 		});
 	});
 });
