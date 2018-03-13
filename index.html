@@ -3,15 +3,23 @@
 	<head>
 		<meta charset="utf-8">
 		<title></title>
+		<link rel="stylesheet" href="node_modules/uikit/dist/css/uikit.min.css">
 	</head>
 
 	<body>
 		<div class="">Hello World</div>
+		<!-- <link rel="stylesheet" href="/node_modules/material-design-lite/material.min.css"> -->
+		<link rel="stylesheet" href="style.css">
+		<!-- <script src="/node_modules/material-design-lite/material.min.js"></script> -->
+		<!-- <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> -->
 		<script src="build/idf.min.js" charset="utf-8"></script>
 		<script type="text/javascript">
 			console.log(idf('div'));
 			console.log(idf('div').html());
 			idf('div').html('Altered Text');
+
+			// intialise idf functionality
+			idf('div').init();
 		</script>
 	</body>
 </html>
