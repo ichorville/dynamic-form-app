@@ -30,6 +30,9 @@ class idf {
 			// Add form title field with floating button
 			this.selector.innerHTML = `
 				<div class="uk-container">
+				<div uk-alert>
+					ALERT: This is an Alert: Signify about the Form Title
+				</div>
 					<div class="uk-child-width-expand@s" uk-grid>
 						<div id="formElements">
 							<div id="form_title" class="uk-card uk-card-default uk-card-body">
@@ -72,12 +75,35 @@ class idf {
 					<div id="${ formElement['key'] }" class="uk-card uk-card-default uk-card-body">					
 						<form class="uk-form-horizontal uk-margin-large">
 							<div class="uk-margin">
-								<label class="uk-form-label" for="form-horizontal-text">Placeholder Value</label>
+								<label class="uk-form-label" for="form-horizontal-text">Question Type</label>
 								<div class="uk-form-controls">
 									<select class="uk-select" id="form-horizontal-select">
-										<option>Option 01</option>
+										<option>
+											<span class="uk-form-icon" uk-icon="icon: user"></span>
+											Option 01
+										</option>
 										<option>Option 02</option>
 									</select>
+								</div>
+							</div>
+							<div class="uk-margin">
+								<!-- Selected Question Type Content -->
+								<div class="uk-form-controls uk-form-controls-text">
+									<label><input class="uk-radio" type="radio" name="radio1"> Option 01</label><br>
+									<label><input class="uk-radio" type="radio" name="radio1"> Option 02</label>
+								</div>
+							</div>
+							<div class="uk-margin">
+								<div class="uk-form-controls uk-form-controls-text">
+									<ul class="tg-list">
+										<a uk-icon="trash" uk-icon="icon: check; ratio: 3.5" 
+										uk-tooltip="title: Remove Question; pos: bottom"></a>
+										<li class="tg-list-item">
+											<span>Required :</span>
+											<input class="tgl tgl-flip" id="cb5" type="checkbox"/>
+											<label class="tgl-btn" data-tg-off="Nope" data-tg-on="Yeah!" for="cb5"></label>
+										</li>
+									</ul>
 								</div>
 							</div>
 						</form>
