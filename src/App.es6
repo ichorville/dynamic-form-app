@@ -98,10 +98,12 @@ class idf {
 									<ul class="tg-list">
 										<a uk-icon="trash" uk-icon="icon: check; ratio: 3.5" 
 										uk-tooltip="title: Remove Question; pos: bottom"></a>
-										<li class="tg-list-item">
-											<span>Required :</span>
+										<span style="padding-left:25px;">|</span>
+										<li class="tg-list-item" style="display:flex;">
+											<span style="padding-top: 4px;">Required :</span>
 											<input class="tgl tgl-flip" id="cb5" type="checkbox"/>
-											<label class="tgl-btn" data-tg-off="Nope" data-tg-on="Yeah!" for="cb5"></label>
+											<label class="tgl-btn" data-tg-off="Nope" data-tg-on="Yeah!" for="cb5"
+												style="margin-left:15px;"></label>
 										</li>
 									</ul>
 								</div>
