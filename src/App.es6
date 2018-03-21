@@ -54,7 +54,6 @@ class idf {
 			`;
 
 			this.idf_add_btn = document.getElementById('idf_add_btn');
-
 			this.idf_add_btn.addEventListener('click', function (event) {
 				this.div_form = document.getElementById('formElements');
 
@@ -101,8 +100,8 @@ class idf {
 										<span style="padding-left:25px;">|</span>
 										<li class="tg-list-item" style="display:flex;">
 											<span style="padding-top: 4px;">Required :</span>
-											<input class="tgl tgl-flip" id="cb5" type="checkbox"/>
-											<label class="tgl-btn" data-tg-off="Nope" data-tg-on="Yeah!" for="cb5"
+											<input class="tgl tgl-flip" id="${ formElement['key'] }_cb" type="checkbox"/>
+											<label id="${ formElement['key'] }_lbl" class="tgl-btn" data-tg-off="Nope" data-tg-on="Yeah!" for="${ formElement['key'] }_cb"
 												style="margin-left:15px;"></label>
 										</li>
 									</ul>
@@ -112,6 +111,12 @@ class idf {
 					</div>
 				`;
 				this.div_form.appendChild(div_element);
+
+				this.requiredButton = document.getElementById(`${ formElement['key'] }_lbl`);
+				this.requiredButton.addEventListener('click', function (event) {
+					console.log(event);
+					// console.log(event.target.nextElementSibling.dataset);
+				});
 			});
 		}
 		return this.selector;
