@@ -63,7 +63,7 @@ class idf {
 					value: '',
 					controlType: '',
 					type: '',
-					required: '',
+					required: false,
 					order: '',
 					placeholder: '',
 				};
@@ -95,7 +95,7 @@ class idf {
 							<div class="uk-margin">
 								<div class="uk-form-controls uk-form-controls-text">
 									<ul class="tg-list">
-										<a uk-icon="trash" uk-icon="icon: check; ratio: 3.5" 
+										<a style="padding:10px;" id="${ formElement['key'] }_remove" uk-icon="trash" uk-icon="icon: check; ratio: 3.5" 
 										uk-tooltip="title: Remove Question; pos: bottom"></a>
 										<span style="padding-left:25px;">|</span>
 										<li class="tg-list-item" style="display:flex;">
@@ -112,11 +112,40 @@ class idf {
 				`;
 				this.div_form.appendChild(div_element);
 
+				// set required status of formElement
 				this.requiredButton = document.getElementById(`${ formElement['key'] }_lbl`);
 				this.requiredButton.addEventListener('click', function (event) {
-					console.log(event);
-					// console.log(event.target.nextElementSibling.dataset);
+					// get relevant formElement
+					idf_form_object['formElements'].forEach(element => {
+						if (element['key'] == getByKey(event.target.id)) {
+							// change formElement required status
+							element['required'] = !element['required'];
+						}
+					});
 				});
+
+				// remove formElement
+				this.deleteFormElementBtn = document.getElementById(`${ formElement['key'] }_remove`);
+				this.deleteFormElementBtn.addEventListener('click', function (event) {
+					if (event.target.nodeName != 'A') {
+						var x = idf_form_object['formElements'].filter(element => {
+							if (element['key'] == getByKey(event.target.id)) {
+								console.log(element);
+								return true;
+							}
+						});
+						// try including the splice method remoing the filter metho
+					}
+					console.log('Not out');
+				});
+
+				// splice id string
+				function getByKey(key) {
+					var currentKey = key;
+					var selector = currentKey.indexOf('_');
+					currentKey = currentKey.substring(0, selector != -1 ? selector : currentKey.length);
+					return currentKey; // return element key which corresponds to the actual formElement
+				}
 			});
 		}
 		return this.selector;
