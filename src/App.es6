@@ -77,11 +77,8 @@ class idf {
 								<label class="uk-form-label" for="form-horizontal-text">Question Type</label>
 								<div class="uk-form-controls">
 									<select class="uk-select" id="form-horizontal-select">
-										<option>
-											<span class="uk-form-icon" uk-icon="icon: user"></span>
-											Option 01
-										</option>
-										<option>Option 02</option>
+										<option>Short Text</option>
+										<option>Paragraph</option>
 									</select>
 								</div>
 							</div>
@@ -92,13 +89,18 @@ class idf {
 									<label><input class="uk-radio" type="radio" name="radio1"> Option 02</label>
 								</div>
 							</div>
-							<div class="uk-margin">
-								<div class="uk-form-controls uk-form-controls-text">
+							<div class="uk-margin" style="text-align:right;">
+								<div class="uk-form-controls uk-form-controls-text" style="display:flex;">
+									<span id="selected-type">
+										<a style="padding:10px;" id="${ formElement['key'] }_remove" uk-icon="trash" uk-icon="icon: check; ratio: 3.5" 
+											uk-tooltip="title: Remove Question; pos: bottom"></a>
+									</span>
+									<span style="flex: 1 1 auto;"></span>
 									<ul class="tg-list">
 										<a style="padding:10px;" id="${ formElement['key'] }_remove" uk-icon="trash" uk-icon="icon: check; ratio: 3.5" 
-										uk-tooltip="title: Remove Question; pos: bottom"></a>
-										<span style="padding-left:25px;">|</span>
-										<li class="tg-list-item" style="display:flex;">
+											uk-tooltip="title: Remove Question; pos: bottom"></a>
+										<span style="padding-left:25px;border-left: 1px solid #e0e0e0;height: 32px;margin: 0 16px;width: 0;"></span>
+										<li class="tg-list-item" style="display:flex;margin-left:-10px;">
 											<span style="padding-top: 4px;">Required :</span>
 											<input class="tgl tgl-flip" id="${ formElement['key'] }_cb" type="checkbox"/>
 											<label id="${ formElement['key'] }_lbl" class="tgl-btn" data-tg-off="Nope" data-tg-on="Yeah!" for="${ formElement['key'] }_cb"
@@ -111,6 +113,11 @@ class idf {
 					</div>
 				`;
 				this.div_form.appendChild(div_element);
+
+				this.form_horizontal_select = document.getElementById('form-horizontal-select');
+				this.form_horizontal_select.addEventListener('change', function (event) {
+					console.log(event);
+				});
 
 				// set required status of formElement
 				this.requiredButton = document.getElementById(`${ formElement['key'] }_lbl`);
@@ -134,11 +141,9 @@ class idf {
 								idf_form_object['formElements'].splice(index, 1);
 								// delete relative html content
 								this.currentDiv = document.getElementById(`${ formElement['key'] }`);
-								console.log(this.currentDiv);
-								this.currentDiv.parentNode.removeChild(this.currentDiv);
+								document.getElementById('formElements').removeChild(this.currentDiv.parentNode);
 							}
 						});
-						// try including the splice method remoing the filter metho
 					}
 				});
 
@@ -152,10 +157,6 @@ class idf {
 			});
 		}
 		return this.selector;
-	}
-
-	refresh() {
-		
 	}
 }
 
