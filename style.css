@@ -170,3 +170,67 @@ h4 {
 	-webkit-transform: rotateY(20deg);
 	transform: rotateY(20deg);
 }
+
+
+ul {
+	text-align: center;
+}
+
+ul > li {
+	display: inline-block;
+}
+
+.dropdownContain {
+	width: 160px;
+	position: absolute;
+	z-index: 2;
+	top: -1000px;
+}
+.dropOut {
+	width: 160px;
+	background: white;
+	float: left;
+	position: relative;
+	margin-top: 0px;
+	opacity: 0;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 6px rgba(0,0,0,.15);
+	-moz-box-shadow: 0 1px 6px rgba(0,0,0,.15);
+	box-shadow: 0 1px 6px rgba(0,0,0,.15);
+	-webkit-transition: all .1s ease-out;
+	-moz-transition: all .1s ease-out;
+	-ms-transition: all .1s ease-out;
+	-o-transition: all .1s ease-out;
+	transition: all .1s ease-out;
+}
+
+.dropOut ul {
+	float: left;
+	padding: 10px 0;
+}
+.dropOut ul li {
+	text-align: left;
+	float: left;
+	width: 125px;
+	padding: 12px 0 10px 15px;
+	margin: 0px 10px;
+	color: #777;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-transition: background .1s ease-out;
+	-moz-transition: background .1s ease-out;
+	-ms-transition: background .1s ease-out;
+	-o-transition: background .1s ease-out;
+	transition: background .1s ease-out;
+}
+
+.dropOut ul li:hover {
+	background: #f6f6f6;
+}
+
+.uk-form-controls:hover .dropdownContain { top: 65px; }
+.uk-form-controls:hover .underline { border-bottom-color: #777; }
+.uk-form-controls:hover .dropOut { opacity: 1; margin-top: 8px; cursor: pointer; }
