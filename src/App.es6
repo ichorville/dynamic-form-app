@@ -1,6 +1,9 @@
 
 "use strict";
-
+/**
+ * Additional referrences
+ * http://cssdeck.com/labs/soothing-css3-dropdown-animation
+ */
 import UIkit from 'uikit';
 import Icons from 'uikit/dist/js/uikit-icons';
 
@@ -64,7 +67,7 @@ class idf {
 					controlType: '',
 					type: '',
 					required: false,
-					order: '',
+					order: idf_form_object['formElements'].length + 1,
 					placeholder: '',
 				};
 				idf_form_object['formElements'].push(formElement);
@@ -76,10 +79,17 @@ class idf {
 							<div class="uk-margin">
 								<label class="uk-form-label" for="form-horizontal-text">Question Type</label>
 								<div class="uk-form-controls">
-									<select class="uk-select" id="form-horizontal-select">
-										<option>Short Text</option>
-										<option>Paragraph</option>
-									</select>
+									<select class="uk-select" id="form-horizontal-select" class="drop"></select>
+									<div class="dropdownContain">
+										<div class="dropOut">
+											<ul>
+												<li>Plan</li>
+												<li>Account Settings</li>
+												<li>Switch Account</li>
+												<li>Sign Out</li>
+											</ul>
+										</div>
+									</div>
 								</div>
 							</div>
 							<div class="uk-margin">
@@ -91,10 +101,7 @@ class idf {
 							</div>
 							<div class="uk-margin" style="text-align:right;">
 								<div class="uk-form-controls uk-form-controls-text" style="display:flex;">
-									<span id="selected-type">
-										<a style="padding:10px;" id="${ formElement['key'] }_remove" uk-icon="trash" uk-icon="icon: check; ratio: 3.5" 
-											uk-tooltip="title: Remove Question; pos: bottom"></a>
-									</span>
+									<span id="selected-type"></span>
 									<span style="flex: 1 1 auto;"></span>
 									<ul class="tg-list">
 										<a style="padding:10px;" id="${ formElement['key'] }_remove" uk-icon="trash" uk-icon="icon: check; ratio: 3.5" 
@@ -117,6 +124,7 @@ class idf {
 				this.form_horizontal_select = document.getElementById('form-horizontal-select');
 				this.form_horizontal_select.addEventListener('change', function (event) {
 					console.log(event);
+					console.log(idf_form_object);
 				});
 
 				// set required status of formElement
