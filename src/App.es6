@@ -79,12 +79,12 @@ class idf {
 							<div class="uk-margin">
 								<label class="uk-form-label" for="form-horizontal-text">Question Type</label>
 								<div class="uk-form-controls">
-									<select class="uk-select" id="form-horizontal-select" class="drop"></select>
+									<input class="uk-input" disabled type="text" placeholder="--">
 									<div class="dropdownContain">
 										<div class="dropOut">
 											<ul>
-												<li>Plan</li>
-												<li>Account Settings</li>
+												<li><i class="material-icons">short_text</i><span class="icon-text">Short Text</span></li>
+												<li><i class="material-icons">subject</i><span class="icon-text">Paragraph</span></li>
 												<li>Switch Account</li>
 												<li>Sign Out</li>
 											</ul>
@@ -120,12 +120,6 @@ class idf {
 					</div>
 				`;
 				this.div_form.appendChild(div_element);
-
-				this.form_horizontal_select = document.getElementById('form-horizontal-select');
-				this.form_horizontal_select.addEventListener('change', function (event) {
-					console.log(event);
-					console.log(idf_form_object);
-				});
 
 				// set required status of formElement
 				this.requiredButton = document.getElementById(`${ formElement['key'] }_lbl`);
