@@ -127,16 +127,19 @@ class idf {
 				// remove formElement
 				this.deleteFormElementBtn = document.getElementById(`${ formElement['key'] }_remove`);
 				this.deleteFormElementBtn.addEventListener('click', function (event) {
-					if (event.target.nodeName != 'A') {
-						var x = idf_form_object['formElements'].filter(element => {
+					// select click event on anchor-icon
+					if (event.target.nodeName == 'A') {
+						var x = idf_form_object['formElements'].forEach((element, index) => {
 							if (element['key'] == getByKey(event.target.id)) {
-								console.log(element);
-								return true;
+								idf_form_object['formElements'].splice(index, 1);
+								// delete relative html content
+								this.currentDiv = document.getElementById(`${ formElement['key'] }`);
+								console.log(this.currentDiv);
+								this.currentDiv.parentNode.removeChild(this.currentDiv);
 							}
 						});
 						// try including the splice method remoing the filter metho
 					}
-					console.log('Not out');
 				});
 
 				// splice id string
