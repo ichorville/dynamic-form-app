@@ -36,7 +36,7 @@ class idf {
 				<div uk-alert>
 					ALERT: This is an Alert: Signify about the Form Title
 				</div>
-					<div class="uk-child-width-expand@s" uk-grid>
+					<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">
 						<div id="formElements">
 							<div id="form_title" class="uk-card uk-card-default uk-card-body">
 								<form class="uk-form-horizontal uk-margin-large">
@@ -79,33 +79,67 @@ class idf {
 							<div class="uk-margin">
 								<label class="uk-form-label" for="form-horizontal-text">Question Type</label>
 								<div class="uk-form-controls">
-									<input class="uk-input" disabled type="text" placeholder="--">
+									<input class="uk-input" disabled type="text" placeholder="Short answer">
 									<div class="dropdownContain">
 										<div class="dropOut">
 											<ul>
-												<li><i class="material-icons">short_text</i><span class="icon-text">Short Text</span></li>
-												<li><i class="material-icons">subject</i><span class="icon-text">Paragraph</span></li>
-												<li>Switch Account</li>
-												<li>Sign Out</li>
+												<li>
+													<i class="material-icons">short_text</i>
+													<span class="icon-text">Short answer</span>
+													</li>
+												<li>
+													<i class="material-icons">subject</i>
+													<span class="icon-text">Paragraph</span>
+												</li>
+												<li style="border-top: 1px solid rgba(0,0,0,0.12);">
+													<i class="material-icons">radio_button_checked</i>
+													<span class="icon-text">Multiple Choice</span>
+												</li>
+												<li>
+													<i class="material-icons">check_box</i>
+													<span class="icon-text">Checkboxes</span>
+												</li>
+												<li>
+													<i class="material-icons">arrow_drop_down_circle</i>
+													<span class="icon-text">Dropdown</span>
+												</li>
+												<li style="border-top: 1px solid rgba(0,0,0,0.12);">
+													<i class="material-icons">event</i>
+													<span class="icon-text">Date</span>
+												</li>
 											</ul>
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="uk-margin">
+							<div id="selected_question_dom" class="uk-margin">
 								<!-- Selected Question Type Content -->
-								<div class="uk-form-controls uk-form-controls-text">
-									<label><input class="uk-radio" type="radio" name="radio1"> Option 01</label><br>
-									<label><input class="uk-radio" type="radio" name="radio1"> Option 02</label>
+								<div class="uk-margin">
+									<label class="uk-form-label" for="form-horizontal-text">Question Name</label>
+									<div class="uk-form-controls">
+										<input 
+											class="uk-input" 
+											type="text" 
+											placeholder="Question Name">
+									</div>
+								</div>
+								<div class="uk-margin">
+									<label class="uk-form-label" for="form-horizontal-text">Content</label>
+									<div class="uk-form-controls">
+										<input 
+											class="uk-input" 
+											type="text" 
+											disabled
+											placeholder="Short answer text">
+									</div>
 								</div>
 							</div>
-							<div class="uk-margin" style="text-align:right;">
+							<div id="bottom-controls" class="uk-margin" style="text-align:right;margin-bottom:0px;">
 								<div class="uk-form-controls uk-form-controls-text" style="display:flex;">
 									<span id="selected-type"></span>
 									<span style="flex: 1 1 auto;"></span>
 									<ul class="tg-list">
-										<a style="padding:10px;" id="${ formElement['key'] }_remove" uk-icon="trash" uk-icon="icon: check; ratio: 3.5" 
-											uk-tooltip="title: Remove Question; pos: bottom"></a>
+										<i id="${ formElement['key'] }_remove" class="material-icons" uk-tooltip="title: Remove Question; pos: bottom">delete</i>
 										<span style="padding-left:25px;border-left: 1px solid #e0e0e0;height: 32px;margin: 0 16px;width: 0;"></span>
 										<li class="tg-list-item" style="display:flex;margin-left:-10px;">
 											<span style="padding-top: 4px;">Required :</span>
@@ -121,9 +155,29 @@ class idf {
 				`;
 				this.div_form.appendChild(div_element);
 
+				var questionCard = document.querySelector(`#${ formElement['key'] }.uk-card-default`).parentElement;
+				questionCard.id = `${ formElement['key'] }_parent`;
+				questionCard.children[0].style.cssText = 'pointer-events: none';
+				questionCard.addEventListener('click', function editableQuestion(event) {
+					idf_form_object['formElements'].forEach(element => {
+						var questionElem = document.getElementById(`${ element['key'] }_parent`);
+						if (questionElem.id != element['key']) {
+							questionElem.children[0].style.cssText = 'pointer-events: none';
+						}
+						var bottomControls = document.querySelector(`#${ element['key'] }.uk-card-default #bottom-controls`);
+						bottomControls.style.cssText = 'display:none;';
+					});
+					event.target.children[0].style.cssText = 'padding-top: 20px;box-shadow: 0 -2px 2px 0 rgba(0,0,0,0.2), 0 6px 10px 0 rgba(0,0,0,0.3);margin-bottom: 2px;border-left: 3px solid #4d90fe';
+
+					var bottomControls = document.querySelector(`#${ formElement['key'] }.uk-card-default #bottom-controls`);
+					bottomControls.style.cssText = 'display:block;margin-bottom:-20px;border-top: 1px solid #e0e0e0;padding-top: 10px;';
+					//  remove click event from element
+					questionCard.removeEventListener('click', editableQuestion);
+				});
+
 				// set required status of formElement
 				this.requiredButton = document.getElementById(`${ formElement['key'] }_lbl`);
-				this.requiredButton.addEventListener('click', function (event) {
+				this.requiredButton.addEventListener('click', (event) => {
 					// get relevant formElement
 					idf_form_object['formElements'].forEach(element => {
 						if (element['key'] == getByKey(event.target.id)) {
@@ -136,17 +190,15 @@ class idf {
 				// remove formElement
 				this.deleteFormElementBtn = document.getElementById(`${ formElement['key'] }_remove`);
 				this.deleteFormElementBtn.addEventListener('click', function (event) {
-					// select click event on anchor-icon
-					if (event.target.nodeName == 'A') {
-						var x = idf_form_object['formElements'].forEach((element, index) => {
-							if (element['key'] == getByKey(event.target.id)) {
-								idf_form_object['formElements'].splice(index, 1);
-								// delete relative html content
-								this.currentDiv = document.getElementById(`${ formElement['key'] }`);
-								document.getElementById('formElements').removeChild(this.currentDiv.parentNode);
-							}
-						});
-					}
+					console.log(event);
+					var x = idf_form_object['formElements'].forEach((element, index) => {
+						if (element['key'] == getByKey(event.target.id)) {
+							idf_form_object['formElements'].splice(index, 1);
+							// delete relative html content
+							this.currentDiv = document.getElementById(`${ formElement['key'] }`);
+							document.getElementById('formElements').removeChild(this.currentDiv.parentNode);
+						}
+					});
 				});
 
 				// splice id string
