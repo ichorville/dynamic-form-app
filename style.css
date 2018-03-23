@@ -1,3 +1,72 @@
+@media (max-width: 599px) {
+	.dropdownContain {
+		left: 73%;
+	}
+}
+  
+@media (min-width: 600px) and (max-width: 899px) {
+	.dropdownContain {
+		left: 73%;
+	}
+}
+  
+@media (min-width: 600px) {
+	.dropdownContain {
+		left: 68%;
+	}
+}
+  
+@media (min-width: 900px) and (max-width: 1199px) {
+	.uk-container {
+		padding-left: 30px;
+		padding-right: 30px;
+	}
+	.dropdownContain {
+		left: 68%;
+	}
+}
+  
+@media (min-width: 900px) {
+	.uk-container {
+		padding-left: 40px;
+		padding-right: 40px;
+	}
+	.dropdownContain {
+		left: 73%;
+	}
+}
+  
+@media (min-width: 1200px) and (max-width: 1799px) {
+	.uk-container {
+		padding-left: 400px;
+		padding-right: 400px;
+	}
+
+	.dropdownContain {
+		left: 68%;
+	}
+}
+  
+@media (min-width: 1200px) {
+	.uk-container {
+		padding-left: 400px;
+		padding-right: 400px;
+	}
+	.dropdownContain {
+		left: 68%;
+	}
+}
+  
+@media (min-width: 1800px) {
+	.uk-container {
+		padding-left: 400px;
+		padding-right: 400px;
+	}
+	.dropdownContain {
+		left: 68%;
+	}
+}
+
 .float {
 	position: fixed;
 	width: 60px;
@@ -181,13 +250,13 @@ ul > li {
 }
 
 .dropdownContain {
-	width: 160px;
+	width: 216px;
 	position: absolute;
 	z-index: 2;
-	top: -1000px;
+	top: -25000px;
 }
 .dropOut {
-	width: 160px;
+	width: 216px;
 	background: white;
 	float: left;
 	position: relative;
@@ -213,7 +282,7 @@ ul > li {
 .dropOut ul li {
 	text-align: left;
 	float: left;
-	width: 125px;
+	width: 182px;
 	padding: 12px 0 10px 15px;
 	margin: 0px 10px;
 	color: #777;
@@ -234,3 +303,17 @@ ul > li {
 .uk-form-controls:hover .dropdownContain { top: 65px; }
 .uk-form-controls:hover .underline { border-bottom-color: #777; }
 .uk-form-controls:hover .dropOut { opacity: 1; margin-top: 8px; cursor: pointer; }
+
+.icon-text {
+	margin-top: -1px;
+    position: absolute;
+    margin-left: 15px;
+}
+
+#bottom-controls {
+	display: none;
+}
+
+.material-icons:hover {
+	cursor: pointer;
+}
