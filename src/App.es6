@@ -1,9 +1,6 @@
 
 "use strict";
-/**
- * Additional referrences
- * http://cssdeck.com/labs/soothing-css3-dropdown-animation
- */
+
 import UIkit from 'uikit';
 import Icons from 'uikit/dist/js/uikit-icons';
 
@@ -34,27 +31,90 @@ class idf {
 			this.selector.innerHTML = `
 				<div class="uk-container">
 				<div uk-alert>
-					ALERT: This is an Alert: Signify about the Form Title
+					ALERT: Select Question Field To Edit 
 				</div>
 					<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">
 						<div id="formElements">
-							<div id="form_title" class="uk-card uk-card-default uk-card-body">
-								<form class="uk-form-horizontal uk-margin-large">
-									<div class="uk-margin">
-										<label class="uk-form-label" for="form-horizontal-text">Form Name</label>
-										<div class="uk-form-controls">
-											<input class="uk-input" id="form-input" type="text" placeholder="Please Enter Form Name...">
+							<div id="form_title_parent">
+								<div id="form_title" class="uk-card uk-card-default uk-card-body inactive">
+									<form id="title-form" class="uk-form-horizontal uk-margin-large">
+										<div class="uk-margin">
+											<label class="uk-form-label" for="form-horizontal-text">Form Name</label>
+											<div class="uk-form-controls">
+												<input class="uk-input" id="form-input" type="text" placeholder="Please Enter Form Name...">
+											</div>
 										</div>
+									</form>
+									<div class="uk-margin hidden">
+										<h1 id="form-title-preview">Untitled form</h1>
 									</div>
-								</form>
+								</div>
 							</div>
 						</div>
 					</div>
 					<a id="idf_add_btn" class="float" uk-tooltip="title: Add Question; pos: bottom">
-						<i style="margin-top:22px;" uk-icon="icon: plus" ></i>
+						<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE145;</i>
 					</a>
 				</div>
 			`;
+
+			// make form title editable
+			var formTitle = document.getElementById('form_title_parent');
+			formTitle.addEventListener('click', makeTitleEditable);
+
+			// make each added question editable
+			function editQuestion(event) {
+				idf_form_object['formElements'].forEach(element => {
+					var card = document.getElementById(`${ element['key'] }_parent`);
+					if (card.children[0].id == getByKey(event.target.id)) {
+						card.children[0].classList.remove('inactive');
+						card.children[0].classList.add('active');
+						formTitle.children[0].classList.remove('active');
+						formTitle.children[0].classList.add('inactive');
+						formTitle.addEventListener('click', makeTitleEditable);
+						// remove event handler to avoid multiple triggering of the function 
+						card.removeEventListener('click', editQuestion);
+					} else {
+						card.children[0].classList.remove('active');
+						card.children[0].classList.add('inactive');
+						formTitle.children[0].classList.remove('active');
+						formTitle.children[0].classList.add('inactive');
+						// make all other questions editable
+						card.addEventListener('click', editQuestion);
+						formTitle.addEventListener('click', makeTitleEditable);
+					}
+				});
+			}
+
+			// make form title editable
+			function makeTitleEditable(event) {
+				formTitle.children[0].classList.remove('inactive');
+				formTitle.children[0].classList.add('active');
+				formTitle.removeEventListener('click', makeTitleEditable);
+
+				idf_form_object['formElements'].forEach(element => {
+					var questionCard = document.getElementById(`${ element['key'] }_parent`);
+					questionCard.children[0].classList.remove('active');
+					questionCard.children[0].classList.add('inactive');
+					questionCard.addEventListener('click', editQuestion);
+				});
+			}
+
+			// splice id string
+			function getByKey(key) {
+				var currentKey = key;
+				var selector = currentKey.indexOf('_');
+				currentKey = currentKey.substring(0, selector != -1 ? selector : currentKey.length);
+				return currentKey; // return element key which corresponds to the actual formElement
+			}
+
+			var formInput = document.getElementById('form-input');
+			var formTitlePreview = document.getElementById('form-title-preview');
+			console.log(formInput);
+			formInput.addEventListener('keyup', (event) => {
+				idf_form_object['title'] = event.target.value;
+				formTitlePreview.innerHTML = event.target.value;
+			});
 
 			this.idf_add_btn = document.getElementById('idf_add_btn');
 			this.idf_add_btn.addEventListener('click', function (event) {
@@ -74,7 +134,7 @@ class idf {
 
 				var div_element = document.createElement('div');
 				div_element.innerHTML = `
-					<div id="${ formElement['key'] }" class="uk-card uk-card-default uk-card-body">					
+					<div id="${ formElement['key'] }" class="uk-card uk-card-default uk-card-body active">					
 						<form class="uk-form-horizontal uk-margin-large">
 							<div class="uk-margin">
 								<label class="uk-form-label" for="form-horizontal-text">Question Type</label>
@@ -134,7 +194,7 @@ class idf {
 									</div>
 								</div>
 							</div>
-							<div id="bottom-controls" class="uk-margin" style="text-align:right;margin-bottom:0px;">
+							<div id="bottom-controls" class="uk-margin">
 								<div class="uk-form-controls uk-form-controls-text" style="display:flex;">
 									<span id="selected-type"></span>
 									<span style="flex: 1 1 auto;"></span>
@@ -151,29 +211,33 @@ class idf {
 								</div>
 							</div>
 						</form>
+						<div class="uk-margin hidden">
+							<h1 id="${ formElement['key'] }_title_preview" class="question-preview">Untitled Question</h1>
+							<span class="short-answer-text">Short answer text</span>
+							<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);margin-top: -10px;"></div>
+						</div>
 					</div>
 				`;
 				this.div_form.appendChild(div_element);
 
-				var questionCard = document.querySelector(`#${ formElement['key'] }.uk-card-default`).parentElement;
-				questionCard.id = `${ formElement['key'] }_parent`;
-				questionCard.children[0].style.cssText = 'pointer-events: none';
-				questionCard.addEventListener('click', function editableQuestion(event) {
-					idf_form_object['formElements'].forEach(element => {
-						var questionElem = document.getElementById(`${ element['key'] }_parent`);
-						if (questionElem.id != element['key']) {
-							questionElem.children[0].style.cssText = 'pointer-events: none';
-						}
-						var bottomControls = document.querySelector(`#${ element['key'] }.uk-card-default #bottom-controls`);
-						bottomControls.style.cssText = 'display:none;';
-					});
-					event.target.children[0].style.cssText = 'padding-top: 20px;box-shadow: 0 -2px 2px 0 rgba(0,0,0,0.2), 0 6px 10px 0 rgba(0,0,0,0.3);margin-bottom: 2px;border-left: 3px solid #4d90fe';
-
-					var bottomControls = document.querySelector(`#${ formElement['key'] }.uk-card-default #bottom-controls`);
-					bottomControls.style.cssText = 'display:block;margin-bottom:-20px;border-top: 1px solid #e0e0e0;padding-top: 10px;';
-					//  remove click event from element
-					questionCard.removeEventListener('click', editableQuestion);
+				// give id to parent element of question DOM
+				var createdCard = document.querySelector(`#${ formElement['key'] }.uk-card-default`).parentElement;
+				createdCard.id = `${ formElement['key'] }_parent`;
+				
+				// make all previous cards inactive
+				idf_form_object['formElements'].forEach(element => {
+					var formCard = document.getElementById(`${ element['key'] }_parent`);
+					if (formCard.children[0].id != formElement['key']) {
+						formCard.children[0].classList.remove('active');
+						formCard.children[0].classList.add('inactive');
+						// assign click event events to make each question editable
+						formCard.addEventListener('click', editQuestion);
+					}
 				});
+				// make form title inactive
+				formTitle.children[0].classList.remove('active');
+				formTitle.children[0].classList.add('inactive');
+				formTitle.addEventListener('click', makeTitleEditable);
 
 				// set required status of formElement
 				this.requiredButton = document.getElementById(`${ formElement['key'] }_lbl`);
@@ -200,14 +264,6 @@ class idf {
 						}
 					});
 				});
-
-				// splice id string
-				function getByKey(key) {
-					var currentKey = key;
-					var selector = currentKey.indexOf('_');
-					currentKey = currentKey.substring(0, selector != -1 ? selector : currentKey.length);
-					return currentKey; // return element key which corresponds to the actual formElement
-				}
 			});
 		}
 		return this.selector;
