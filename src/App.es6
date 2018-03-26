@@ -138,7 +138,7 @@ class idf {
 							<div class="uk-margin">
 								<label class="uk-form-label" for="form-horizontal-text">Question Type</label>
 								<div class="uk-form-controls">
-									<input class="uk-input" disabled type="text" placeholder="Short answer">
+									<input id="selectedType" class="uk-input" disabled type="text" placeholder="Short answer">
 									<div class="dropdownContain">
 										<div class="dropOut">
 											<ul>
@@ -222,9 +222,10 @@ class idf {
 
 				// assign keyup event for raw textInput
 				var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+				var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
 				shortTextInput.addEventListener('keyup', (event) => {
-					var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
-					titlePreview.value = event.target.value;
+					// assign text to preview text
+					titlePreview.innerHTML = event.target.value;
 				});
 
 				// give id to parent element of question DOM
@@ -273,14 +274,131 @@ class idf {
 
 				this.selectedQuestionType = document.querySelector(`#${ formElement['key'] } .dropdownContain`);
 				this.selectedQuestionType.addEventListener('click', (event) => {
-					var hiddenElement = documrnt.querySelector(`#${ formElement['key'] } #hiddenElement`)
+					var selectedType = document.querySelector(`#${ formElement['key'] } #selectedType`);
+					var selectedQuestionDOM = document.querySelector(`#${ formElement['key'] } #selected_question_dom`);
+					var hiddenElement = document.querySelector(`#${ formElement['key'] } #hiddenElement`)
 					var elementID = event.target.id;
 					switch (elementID) {
+						// Short text form selection
 						case 'short_text':
-							console.log('Input are $0.59 a pound.');
+							selectedType.placeholder = 'Short answer';
+							selectedQuestionDOM.innerHTML = `
+								<div class="uk-margin">
+									<label class="uk-form-label" for="form-horizontal-text">Question Name</label>
+									<div class="uk-form-controls">
+										<input 
+											id="short_text_input"
+											class="uk-input" 
+											type="text" 
+											placeholder="Question Name">
+									</div>
+								</div>
+								<div class="uk-margin">
+									<label class="uk-form-label" for="form-horizontal-text">Content</label>
+									<div class="uk-form-controls">
+										<input 
+											class="uk-input" 
+											type="text" 
+											disabled
+											placeholder="Short answer text">
+									</div>
+								</div>
+							`;
+							hiddenElement.innerHTML = `
+								<h1 id="${ formElement['key'] }_title_preview" class="question-preview">Untitled Question</h1>
+								<span class="short-answer-text">Short answer text</span>
+								<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);margin-top: -10px;"></div>
+							`;
+							// assign keyup event for new textInput
+							var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+							var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
+							shortTextInput.addEventListener('keyup', (event) => {
+								// assign text to preview text
+								titlePreview.innerHTML = event.target.value;
+							});
 							break;
+						// Textarea selection
 						case 'paragraph':
-							console.log('Paragraph are $0.59 a pound.');
+							selectedType.placeholder = 'Paragraph';
+							selectedQuestionDOM.innerHTML = `
+								<div class="uk-margin">
+									<label class="uk-form-label" for="form-horizontal-text">Question Name</label>
+									<div class="uk-form-controls">
+										<input 
+											id="short_text_input"
+											class="uk-input" 
+											type="text" 
+											placeholder="Question Name">
+									</div>
+								</div>
+								<div class="uk-margin">
+									<label class="uk-form-label" for="form-horizontal-text">Content</label>
+									<div class="uk-form-controls">
+										<input 
+											class="uk-input" 
+											type="text" 
+											disabled
+											placeholder="Long answer text">
+									</div>
+								</div>
+							`;
+							hiddenElement.innerHTML = `
+								<h1 id="${ formElement['key'] }_title_preview" class="question-preview">Untitled Question</h1>
+								<span class="short-answer-text">Long answer text</span>
+								<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);margin-top: -10px;"></div>
+							`;
+							// assign keyup event for new textInput
+							var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+							var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
+							shortTextInput.addEventListener('keyup', (event) => {
+								// assign text to preview text
+								titlePreview.innerHTML = event.target.value;
+							});
+							break;
+						// Radio button selection 
+						case 'multiple_choice':
+							var rawOption = {
+								key: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
+								value: ''
+							};
+							// create new attribute options in formElement
+							formElement['options'] = [];
+							formElement['options'].push(rawOption);
+							selectedType.placeholder = 'Multiple Choice';
+							selectedQuestionDOM.innerHTML = `
+								<div class="uk-margin">
+									<label class="uk-form-label" for="form-horizontal-text">Question Name</label>
+									<div class="uk-form-controls">
+										<input 
+											id="short_text_input"
+											class="uk-input" 
+											type="text" 
+											placeholder="Question Name">
+									</div>
+								</div>
+								<div class="uk-margin">
+									<label class="uk-form-label" for="form-horizontal-text">Content</label>
+									<div class="uk-form-controls">
+										<div class="uk-inline" style="display:block;">
+											<label class="input-icon"><input class="uk-radio" type="radio" disabled></label>
+											<i class="material-icons input-remove" uk-tooltip="title: Remove; pos: bottom">clear</i>	
+											<input style="padding-left:40px;" class="uk-input" type="text">
+										</div>
+										<div class="uk-inline" style="display:block;padding-top:10px;">
+											<label class="input-icon" style="padding-top:10px;">
+												<input class="uk-radio" type="radio" disabled>
+											</label>
+											<span id="add_content" style="padding-left:40px;">Add Option</span>
+											<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);width: 80px;margin-left: 40px;"></div>
+										</div>
+									</div>
+								</div>
+							`;
+
+							var checkbox_addOptions = document.querySelector(`#${ formElement['key'] } #add_content`);
+							checkbox_addOptions.addEventListener('click', (event) => {
+
+							});
 							break;
 					}
 				});
