@@ -110,7 +110,6 @@ class idf {
 
 			var formInput = document.getElementById('form-input');
 			var formTitlePreview = document.getElementById('form-title-preview');
-			console.log(formInput);
 			formInput.addEventListener('keyup', (event) => {
 				idf_form_object['title'] = event.target.value;
 				formTitlePreview.innerHTML = event.target.value;
@@ -143,29 +142,29 @@ class idf {
 									<div class="dropdownContain">
 										<div class="dropOut">
 											<ul>
-												<li>
-													<i class="material-icons">short_text</i>
-													<span class="icon-text">Short answer</span>
-													</li>
-												<li>
-													<i class="material-icons">subject</i>
-													<span class="icon-text">Paragraph</span>
+												<li id="short_text">
+													<i id="short_text" class="material-icons">short_text</i>
+													<span id="short_text" class="icon-text">Short answer</span>
 												</li>
-												<li style="border-top: 1px solid rgba(0,0,0,0.12);">
-													<i class="material-icons">radio_button_checked</i>
-													<span class="icon-text">Multiple Choice</span>
+												<li id="paragraph">
+													<i id="paragraph" class="material-icons">subject</i>
+													<span id="paragraph" class="icon-text">Paragraph</span>
 												</li>
-												<li>
-													<i class="material-icons">check_box</i>
-													<span class="icon-text">Checkboxes</span>
+												<li id="multiple_choice" style="border-top: 1px solid rgba(0,0,0,0.12);">
+													<i id="multiple_choice" class="material-icons">radio_button_checked</i>
+													<span id="multiple_choice" class="icon-text">Multiple Choice</span>
 												</li>
-												<li>
-													<i class="material-icons">arrow_drop_down_circle</i>
-													<span class="icon-text">Dropdown</span>
+												<li id="checkbox">
+													<i id="checkbox" class="material-icons">check_box</i>
+													<span id="checkbox" class="icon-text">Checkboxes</span>
 												</li>
-												<li style="border-top: 1px solid rgba(0,0,0,0.12);">
-													<i class="material-icons">event</i>
-													<span class="icon-text">Date</span>
+												<li id="dropdown">
+													<i id="dropdown" class="material-icons">arrow_drop_down_circle</i>
+													<span id="dropdown" class="icon-text">Dropdown</span>
+												</li>
+												<li id="date" style="border-top: 1px solid rgba(0,0,0,0.12);">
+													<i id="date" class="material-icons">event</i>
+													<span id="date" class="icon-text">Date</span>
 												</li>
 											</ul>
 										</div>
@@ -178,6 +177,7 @@ class idf {
 									<label class="uk-form-label" for="form-horizontal-text">Question Name</label>
 									<div class="uk-form-controls">
 										<input 
+											id="short_text_input"
 											class="uk-input" 
 											type="text" 
 											placeholder="Question Name">
@@ -211,7 +211,7 @@ class idf {
 								</div>
 							</div>
 						</form>
-						<div class="uk-margin hidden">
+						<div id="hiddenElement" class="uk-margin hidden">
 							<h1 id="${ formElement['key'] }_title_preview" class="question-preview">Untitled Question</h1>
 							<span class="short-answer-text">Short answer text</span>
 							<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);margin-top: -10px;"></div>
@@ -219,6 +219,13 @@ class idf {
 					</div>
 				`;
 				this.div_form.appendChild(div_element);
+
+				// assign keyup event for raw textInput
+				var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+				shortTextInput.addEventListener('keyup', (event) => {
+					var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
+					titlePreview.value = event.target.value;
+				});
 
 				// give id to parent element of question DOM
 				var createdCard = document.querySelector(`#${ formElement['key'] }.uk-card-default`).parentElement;
@@ -254,7 +261,6 @@ class idf {
 				// remove formElement
 				this.deleteFormElementBtn = document.getElementById(`${ formElement['key'] }_remove`);
 				this.deleteFormElementBtn.addEventListener('click', function (event) {
-					console.log(event);
 					var x = idf_form_object['formElements'].forEach((element, index) => {
 						if (element['key'] == getByKey(event.target.id)) {
 							idf_form_object['formElements'].splice(index, 1);
@@ -263,6 +269,20 @@ class idf {
 							document.getElementById('formElements').removeChild(this.currentDiv.parentNode);
 						}
 					});
+				});
+
+				this.selectedQuestionType = document.querySelector(`#${ formElement['key'] } .dropdownContain`);
+				this.selectedQuestionType.addEventListener('click', (event) => {
+					var hiddenElement = documrnt.querySelector(`#${ formElement['key'] } #hiddenElement`)
+					var elementID = event.target.id;
+					switch (elementID) {
+						case 'short_text':
+							console.log('Input are $0.59 a pound.');
+							break;
+						case 'paragraph':
+							console.log('Paragraph are $0.59 a pound.');
+							break;
+					}
 				});
 			});
 		}
