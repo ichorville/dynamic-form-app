@@ -364,6 +364,7 @@ class idf {
 							// create new attribute options in formElement
 							formElement['options'] = [];
 							formElement['options'].push(rawOption);
+
 							selectedType.placeholder = 'Multiple Choice';
 							selectedQuestionDOM.innerHTML = `
 								<div class="uk-margin">
@@ -378,11 +379,11 @@ class idf {
 								</div>
 								<div class="uk-margin">
 									<label class="uk-form-label" for="form-horizontal-text">Content</label>
-									<div class="uk-form-controls">
-										<div class="uk-inline" style="display:block;">
+									<div id="${ formElement['key'] }_options" class="uk-form-controls">
+										<div id="${ rawOption['key'] }" class="uk-inline" style="display:block;">
 											<label class="input-icon"><input class="uk-radio" type="radio" disabled></label>
-											<i class="material-icons input-remove" uk-tooltip="title: Remove; pos: bottom">clear</i>	
-											<input style="padding-left:40px;" class="uk-input" type="text">
+											<i id="${ rawOption['key'] }_removeOption" class="material-icons input-remove" uk-tooltip="title: Remove; pos: bottom">clear</i>	
+											<input id="${ rawOption['key'] }_option" style="padding-left:40px;" class="uk-input" type="text">
 										</div>
 										<div class="uk-inline" style="display:block;padding-top:10px;">
 											<label class="input-icon" style="padding-top:10px;">
@@ -395,10 +396,82 @@ class idf {
 								</div>
 							`;
 
+
+							var rawOptionField = document.getElementById(`${ rawOption['key'] }_option`);
+							rawOptionField.addEventListener('keyup', (event) => {
+								formElement['options'].forEach(element => {
+									if (element['key'] == getByKey(event.target.id)) {
+										element['value'] = event.target.value;
+										// edit preview // better yet put a single function to edit the hidden part of this
+									}
+								});
+							});
+
+							var removeOption = document.getElementById(`${ rawOption['key'] }_removeOption`);
+							removeOption.addEventListener('click', (event) => {
+								formElement['options'].forEach((element, index) => {
+									if (element['key'] == getByKey(event.target.id)) {
+										// remove option
+										formElement['options'].splice(index, 1);
+										var currentOptionDiv = event.target.parentElement;
+										// remove element from DOM
+										document.getElementById(`${ formElement['key'] }_options`).removeChild(currentOptionDiv);
+									}
+								});
+							});
+
 							var checkbox_addOptions = document.querySelector(`#${ formElement['key'] } #add_content`);
 							checkbox_addOptions.addEventListener('click', (event) => {
+								var rawOption = {
+									key: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
+									value: ''
+								};
+								formElement['options'].push(rawOption);
 
+								// bind new option to DOM
+								var options = document.getElementById(`${ formElement['key'] }_options`);
+								var newOption = document.createElement('div');
+								newOption.innerHTML = `
+									<label class="input-icon"><input class="uk-radio" type="radio" disabled></label>
+									<i id="${ rawOption['key'] }_removeOption" class="material-icons input-remove" uk-tooltip="title: Remove; pos: bottom">clear</i>	
+									<input id="${ rawOption['key'] }_option" style="padding-left:40px;" class="uk-input" type="text">
+								`;
+								
+								// set CSS properties to parent eliment
+								options.insertBefore(newOption, options.childNodes[formElement['options'].length]); 
+								var childOptionsContent = document.getElementById(`${ rawOption['key'] }_removeOption`);
+								childOptionsContent.parentElement.id = rawOption['key'];
+								childOptionsContent.parentElement.classList.add('uk-inline');
+								childOptionsContent.parentElement.style.display = 'block';
+								
+								// assign event handkler to pass data to the array
+								document.getElementById(`${ rawOption['key'] }_option`).addEventListener('keyup', (event) => {
+									formElement['options'].forEach(element => {
+										if (element['key'] == getByKey(event.target.id)) {
+											element['value'] = event.target.value;
+											// edit preview // better yet put a single function to edit the hidden part of this
+										}
+									});
+								});
+
+								// add click event handler to remove element
+								document.getElementById(`${ rawOption['key'] }_removeOption`).addEventListener('click', (event) => {
+									formElement['options'].forEach((element, index) => {
+										if (element['key'] == getByKey(event.target.id)) {
+											// remove option
+											formElement['options'].splice(index, 1);
+											var currentOptionDiv = event.target.parentElement;
+											// remove element from DOM
+											document.getElementById(`${ formElement['key'] }_options`).removeChild(currentOptionDiv);
+										}
+									});
+								});
+								console.log(idf_form_object);
 							});
+
+							function editPreviewOptions(event) {
+
+							}
 							break;
 					}
 				});
