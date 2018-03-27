@@ -55,6 +55,9 @@ class idf {
 					<a id="idf_add_btn" class="float" uk-tooltip="title: Add Question; pos: bottom">
 						<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE145;</i>
 					</a>
+					<a id="idf_submit_btn" class="float-left" uk-tooltip="title: Submit Form; pos: bottom">
+						<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE876;</i>
+					</a>
 				</div>
 			`;
 
@@ -273,9 +276,10 @@ class idf {
 						}
 					});
 				});
-
+				
 				this.selectedQuestionType = document.querySelector(`#${ formElement['key'] } .dropdownContain`);
 				this.selectedQuestionType.addEventListener('click', (event) => {
+
 					var selectedType = document.querySelector(`#${ formElement['key'] } #selectedType`);
 					var selectedQuestionDOM = document.querySelector(`#${ formElement['key'] } #selected_question_dom`);
 					var hiddenElement = document.querySelector(`#${ formElement['key'] } #hiddenElement`)
@@ -283,6 +287,7 @@ class idf {
 					switch (elementID) {
 						// Short text form selection
 						case 'short_text':
+							formElement['controlType'] = 'short_text';
 							selectedType.placeholder = 'Short answer';
 							selectedQuestionDOM.innerHTML = `
 								<div class="uk-margin">
@@ -311,6 +316,13 @@ class idf {
 								<span class="short-answer-text">Short answer text</span>
 								<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);margin-top: -10px;"></div>
 							`;
+							if (formElement['placeholder'] != '') {
+								// populate DOM of previous data
+								var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+								var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
+								shortTextInput.value = formElement['placeholder'];
+								titlePreview.innerHTML = formElement['placeholder'];
+							}
 							// assign keyup event for new textInput
 							var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
 							var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
@@ -323,6 +335,7 @@ class idf {
 							break;
 						// Textarea selection
 						case 'paragraph':
+							formElement['controlType'] = 'paragraph';
 							selectedType.placeholder = 'Paragraph';
 							selectedQuestionDOM.innerHTML = `
 								<div class="uk-margin">
@@ -351,6 +364,13 @@ class idf {
 								<span class="short-answer-text">Long answer text</span>
 								<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);margin-top: -10px;"></div>
 							`;
+							if (formElement['placeholder'] != '') {
+								// populate DOM of previous data
+								var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+								var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
+								shortTextInput.value = formElement['placeholder'];
+								titlePreview.innerHTML = formElement['placeholder'];
+							}
 							// assign keyup event for new textInput
 							var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
 							var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
@@ -363,66 +383,181 @@ class idf {
 							break;
 						// Radio button selection 
 						case 'multiple_choice':
-							var rawOption = {
-								key: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
-								value: ''
-							};
-							// create new attribute options in formElement
-							formElement['options'] = [];
-							formElement['options'].push(rawOption);
-
-							selectedType.placeholder = 'Multiple Choice';
-							selectedQuestionDOM.innerHTML = `
-								<div class="uk-margin">
-									<label class="uk-form-label" for="form-horizontal-text">Question Name</label>
-									<div class="uk-form-controls">
-										<input 
-											id="short_text_input"
-											class="uk-input" 
-											type="text" 
-											placeholder="Question Name">
-									</div>
-								</div>
-								<div class="uk-margin">
-									<label class="uk-form-label" for="form-horizontal-text">Content</label>
-									<div id="${ formElement['key'] }_options" class="uk-form-controls">
-										<div id="${ rawOption['key'] }" class="uk-inline" style="display:block;">
-											<label class="input-icon"><input class="uk-radio" type="radio" disabled></label>
-											<i id="${ rawOption['key'] }_removeOption" class="material-icons input-remove" uk-tooltip="title: Remove; pos: bottom">clear</i>	
-											<input id="${ rawOption['key'] }_option" style="padding-left:40px;" class="uk-input" type="text">
-										</div>
-										<div class="uk-inline" style="display:block;padding-top:10px;">
-											<label class="input-icon" style="padding-top:10px;">
-												<input class="uk-radio" type="radio" disabled>
-											</label>
-											<span id="add_content" style="padding-left:40px;">Add Option</span>
-											<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);width: 80px;margin-left: 40px;"></div>
-										</div>
-									</div>
-								</div>
-							`;
-							hiddenElement.innerHTML = `
-								<h1 id="${ formElement['key'] }_title_preview" class="question-preview">Untitled Question</h1>
-								<div id="previewOptions">
-								</div>
-							`;
-							function editPreviewOptions() {
+							function editPreviewOptions(innetText) {
 								var previewOptions = document.querySelector(`#${ formElement['key'] } #previewOptions`);
 								previewOptions.innerHTML = ``;
 								formElement['options'].forEach((element, index) => {
+									var div = document.createElement('div');
+			
+									var label = document.createElement('label');
+									label.innerHTML = innetText;
+									previewOptions.insertBefore(label, span);
+									label.classList.add('input-preview-icon');
+			
 									var span = document.createElement('span');
 									if (element['value'] != '') {
 										span.innerHTML = `${ element['value'] }`;
 									} else {
-										span.innerHTML = `option ${ index + 1 }`;
+										span.innerHTML = `Option ${ index + 1 }`;
 									}
-									previewOptions.appendChild(span);
 									span.style.display = 'block';
 									span.style.marginBottom = '-20px';
-									span.classList.add('short-answer-text')
+									span.style.marginTop = '-25px';
+									span.style.paddingLeft = '25px';
+									span.classList.add('short-answer-text');
+			
+									div.appendChild(label);
+									div.appendChild(span);
+									previewOptions.appendChild(div);
 								});
 							}
-							editPreviewOptions();
+							formElement['controlType'] = 'multiple_choice';
+							selectedType.placeholder = 'Multiple Choice';
+							if (formElement['options']) {
+								selectedQuestionDOM.innerHTML = `
+									<div class="uk-margin">
+										<label class="uk-form-label" for="form-horizontal-text">Question Name</label>
+										<div class="uk-form-controls">
+											<input 
+												id="short_text_input"
+												class="uk-input" 
+												type="text" 
+												placeholder="Question Name">
+										</div>
+									</div>
+									<div class="uk-margin">
+										<label class="uk-form-label" for="form-horizontal-text">Content</label>
+										<div id="${ formElement['key'] }_options" class="uk-form-controls">
+											<div class="uk-inline" style="display:block;padding-top:10px;">
+												<label class="input-icon" style="padding-top:10px;">
+													<input class="uk-radio" type="radio" disabled>
+												</label>
+												<span id="add_content" style="padding-left:40px;">Add Option</span>
+												<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);width: 80px;margin-left: 40px;"></div>
+											</div>
+										</div>
+									</div>
+								`;
+								hiddenElement.innerHTML = `
+									<h1 id="${ formElement['key'] }_title_preview" class="question-preview">Untitled Question</h1>
+									<div id="previewOptions">
+									</div>
+								`;
+
+								var options = document.getElementById(`${ formElement['key'] }_options`);
+								formElement['options'].forEach((element, index) => {
+									var newOption = document.createElement('div');
+									newOption.innerHTML = `
+										<label class="input-icon"><input class="uk-radio" type="radio" disabled></label>
+										<i id="${ element['key'] }_removeOption" class="material-icons input-remove" uk-tooltip="title: Remove; pos: bottom">clear</i>	
+										<input id="${ element['key'] }_option" style="padding-left:40px;" class="uk-input" type="text">
+									`;
+									options.insertBefore(newOption, options.childNodes[index]); 
+									document.getElementById(`${ element['key'] }_option`).value = element['value'];
+									document.getElementById(`${ element['key'] }_option`).placeholder = ` Option ${ index + 1 }`;
+									document.getElementById(`${ element['key'] }_option`).addEventListener('keyup', (event) => {
+										element['value'] = event.target.value;
+										editPreviewOptions(`<input class="uk-radio" type="radio" disabled>`);
+									});
+									// set CSS properties to parent eliment
+									var childOptionsContent = document.getElementById(`${ element['key'] }_removeOption`);
+									childOptionsContent.parentElement.id = element['key'];
+									childOptionsContent.parentElement.classList.add('uk-inline');
+									childOptionsContent.parentElement.style.display = 'block';
+									childOptionsContent.addEventListener('click', (event) => {
+										formElement['options'].splice(index, 1);
+											var currentOptionDiv = event.target.parentElement;
+											// remove element from DOM
+											document.getElementById(`${ formElement['key'] }_options`).removeChild(currentOptionDiv);
+											editPreviewOptions(`<input class="uk-radio" type="radio" disabled>`);
+									});
+								});
+								editPreviewOptions(`<input class="uk-radio" type="radio" disabled>`);
+							} else {
+								var rawOption = {
+									key: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
+									value: ''
+								};
+								// create new attribute options in formElement
+								formElement['options'] = [];
+								formElement['options'].push(rawOption);
+	
+								selectedQuestionDOM.innerHTML = `
+									<div class="uk-margin">
+										<label class="uk-form-label" for="form-horizontal-text">Question Name</label>
+										<div class="uk-form-controls">
+											<input 
+												id="short_text_input"
+												class="uk-input" 
+												type="text" 
+												placeholder="Question Name">
+										</div>
+									</div>
+									<div class="uk-margin">
+										<label class="uk-form-label" for="form-horizontal-text">Content</label>
+										<div id="${ formElement['key'] }_options" class="uk-form-controls">
+											<div id="${ rawOption['key'] }" class="uk-inline" style="display:block;">
+												<label class="input-icon"><input class="uk-radio" type="radio" disabled></label>
+												<i id="${ rawOption['key'] }_removeOption" class="material-icons input-remove" uk-tooltip="title: Remove; pos: bottom">clear</i>	
+												<input id="${ rawOption['key'] }_option" style="padding-left:40px;" class="uk-input" type="text">
+											</div>
+											<div class="uk-inline" style="display:block;padding-top:10px;">
+												<label class="input-icon" style="padding-top:10px;">
+													<input class="uk-radio" type="radio" disabled>
+												</label>
+												<span id="add_content" style="padding-left:40px;">Add Option</span>
+												<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);width: 80px;margin-left: 40px;"></div>
+											</div>
+										</div>
+									</div>
+								`;
+								hiddenElement.innerHTML = `
+									<h1 id="${ formElement['key'] }_title_preview" class="question-preview">Untitled Question</h1>
+									<div id="previewOptions">
+									</div>
+								`;
+								editPreviewOptions(`<input class="uk-radio" type="radio" disabled>`);
+	
+								var rawOptionField = document.getElementById(`${ rawOption['key'] }_option`);
+								rawOptionField.placeholder = 'Option 1';
+								rawOptionField.addEventListener('keyup', (event) => {
+									formElement['options'].forEach(element => {
+										if (element['key'] == getByKey(event.target.id)) {
+											element['value'] = event.target.value;
+											editPreviewOptions(`<input class="uk-radio" type="radio" disabled>`);
+										}
+									});
+								});
+	
+								var removeOption = document.getElementById(`${ rawOption['key'] }_removeOption`);
+								removeOption.addEventListener('click', (event) => {
+									formElement['options'].forEach((element, index) => {
+										if (element['key'] == getByKey(event.target.id)) {
+											// remove option
+											formElement['options'].splice(index, 1);
+											var currentOptionDiv = event.target.parentElement;
+											// remove element from DOM
+											document.getElementById(`${ formElement['key'] }_options`).removeChild(currentOptionDiv);
+											editPreviewOptions(`<input class="uk-radio" type="radio" disabled>`);
+										}
+									});
+								});
+							}
+							// bind previous options to DOM if present
+							var radioBtn_title = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+							var radioBtn_title_preview = document.getElementById(`${ formElement['key'] }_title_preview`);
+							if (formElement['placeholder'] != '') {
+								radioBtn_title.value = formElement['placeholder'];
+								radioBtn_title.placeholder = 'Question Name';
+								radioBtn_title_preview.innerHTML = formElement['placeholder'];
+							} else {
+								radioBtn_title.value = '';
+								radioBtn_title.placeholder = 'Question Name';
+								radioBtn_title_preview.innerHTML = 'Untitled Question'
+							}
+							
+							editPreviewOptions(`<input class="uk-radio" type="radio" disabled>`);
+
 							// assign keyup event for new textInput
 							var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
 							var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
@@ -431,30 +566,6 @@ class idf {
 								titlePreview.innerHTML = event.target.value;
 								formElement['label'] = event.target.value;
 								formElement['placeholder'] = event.target.value;
-							});
-
-							var rawOptionField = document.getElementById(`${ rawOption['key'] }_option`);
-							rawOptionField.addEventListener('keyup', (event) => {
-								formElement['options'].forEach(element => {
-									if (element['key'] == getByKey(event.target.id)) {
-										element['value'] = event.target.value;
-										editPreviewOptions();
-									}
-								});
-							});
-
-							var removeOption = document.getElementById(`${ rawOption['key'] }_removeOption`);
-							removeOption.addEventListener('click', (event) => {
-								formElement['options'].forEach((element, index) => {
-									if (element['key'] == getByKey(event.target.id)) {
-										// remove option
-										formElement['options'].splice(index, 1);
-										var currentOptionDiv = event.target.parentElement;
-										// remove element from DOM
-										document.getElementById(`${ formElement['key'] }_options`).removeChild(currentOptionDiv);
-										editPreviewOptions();
-									}
-								});
 							});
 
 							var radioBtn_addOptions = document.querySelector(`#${ formElement['key'] } #add_content`);
@@ -473,27 +584,30 @@ class idf {
 									<i id="${ rawOption['key'] }_removeOption" class="material-icons input-remove" uk-tooltip="title: Remove; pos: bottom">clear</i>	
 									<input id="${ rawOption['key'] }_option" style="padding-left:40px;" class="uk-input" type="text">
 								`;
-								
 								// set CSS properties to parent eliment
 								options.insertBefore(newOption, options.childNodes[formElement['options'].length]); 
+								document.getElementById(`${ rawOption['key'] }_option`).placeholder = `Option ${ formElement['options'].length }`;
+
 								var childOptionsContent = document.getElementById(`${ rawOption['key'] }_removeOption`);
 								childOptionsContent.parentElement.id = rawOption['key'];
 								childOptionsContent.parentElement.classList.add('uk-inline');
 								childOptionsContent.parentElement.style.display = 'block';
-								editPreviewOptions();
+								editPreviewOptions(`<input class="uk-radio" type="radio" disabled>`);
 								
 								// assign event handkler to pass data to the array
-								document.getElementById(`${ rawOption['key'] }_option`).addEventListener('keyup', (event) => {
+								var radioBtn_option = document.getElementById(`${ rawOption['key'] }_option`);
+								radioBtn_option.addEventListener('keyup', (event) => {
 									formElement['options'].forEach(element => {
 										if (element['key'] == getByKey(event.target.id)) {
 											element['value'] = event.target.value;
-											editPreviewOptions();
+											editPreviewOptions(`<input class="uk-radio" type="radio" disabled>`);
 										}
 									});
 								});
 
 								// add click event handler to remove element
-								document.getElementById(`${ rawOption['key'] }_removeOption`).addEventListener('click', (event) => {
+								var radioBtn_remove = document.getElementById(`${ rawOption['key'] }_removeOption`);
+								radioBtn_remove.addEventListener('click', (event) => {
 									formElement['options'].forEach((element, index) => {
 										if (element['key'] == getByKey(event.target.id)) {
 											// remove option
@@ -501,7 +615,7 @@ class idf {
 											var currentOptionDiv = event.target.parentElement;
 											// remove element from DOM
 											document.getElementById(`${ formElement['key'] }_options`).removeChild(currentOptionDiv);
-											editPreviewOptions();
+											editPreviewOptions(`<input class="uk-radio" type="radio" disabled>`);
 										}
 									});
 								});
@@ -509,6 +623,35 @@ class idf {
 						break;
 						// Checkbox selection
 						case 'checkbox':
+							function editPreviewOptions(innetText) {
+								var previewOptions = document.querySelector(`#${ formElement['key'] } #previewOptions`);
+								previewOptions.innerHTML = ``;
+								formElement['options'].forEach((element, index) => {
+									var div = document.createElement('div');
+			
+									var label = document.createElement('label');
+									label.innerHTML = innetText;
+									previewOptions.insertBefore(label, span);
+									label.classList.add('input-preview-icon');
+			
+									var span = document.createElement('span');
+									if (element['value'] != '') {
+										span.innerHTML = `${ element['value'] }`;
+									} else {
+										span.innerHTML = `Option ${ index + 1 }`;
+									}
+									span.style.display = 'block';
+									span.style.marginBottom = '-20px';
+									span.style.marginTop = '-25px';
+									span.style.paddingLeft = '25px';
+									span.classList.add('short-answer-text');
+			
+									div.appendChild(label);
+									div.appendChild(span);
+									previewOptions.appendChild(div);
+								});
+							}
+							formElement['controlType'] = 'checkbox';
 							selectedType.placeholder = 'Checkbox';
 							if (formElement['options']) {
 								selectedQuestionDOM.innerHTML = `
@@ -540,33 +683,7 @@ class idf {
 									<div id="previewOptions">
 									</div>
 								`;
-								function editPreviewOptions() {
-									var previewOptions = document.querySelector(`#${ formElement['key'] } #previewOptions`);
-									previewOptions.innerHTML = ``;
-									formElement['options'].forEach((element, index) => {
-										var span = document.createElement('span');
-										if (element['value'] != '') {
-											span.innerHTML = `${ element['value'] }`;
-										} else {
-											span.innerHTML = `option ${ index + 1 }`;
-										}
-										previewOptions.appendChild(span);
-										span.style.display = 'block';
-										span.style.marginBottom = '-20px';
-										span.classList.add('short-answer-text')
-									});
-								}
-								// bind previous options to DOM if present
-								var checkbox_title = document.querySelector(`#${ formElement['key'] } #short_text_input`);
-								var checkbox_title_preview = document.getElementById(`${ formElement['key'] }_title_preview`);
-								if (formElement['placeholder'] != '') {
-									checkbox_title.placeholder = formElement['placeholder'];
-									checkbox_title_preview.innerHTML = formElement['placeholder'];
-								} else {
-									checkbox_title.placeholder = 'Question Name';
-									checkbox_title_preview.innerHTML = 'Untitled Question'
-								}
-
+								
 								var options = document.getElementById(`${ formElement['key'] }_options`);
 								formElement['options'].forEach((element, index) => {
 									var newOption = document.createElement('div');
@@ -576,14 +693,26 @@ class idf {
 										<input id="${ element['key'] }_option" style="padding-left:40px;" class="uk-input" type="text">
 									`;
 									options.insertBefore(newOption, options.childNodes[index]); 
-									document.getElementById(`${ element['key'] }_option`).placeholder = element['value'];
+									document.getElementById(`${ element['key'] }_option`).value = element['value'];
+									document.getElementById(`${ element['key'] }_option`).placeholder = ` Option ${ index + 1 }`;
+									document.getElementById(`${ element['key'] }_option`).addEventListener('keyup', (event) => {
+										element['value'] = event.target.value;
+										editPreviewOptions(`<input class="uk-checkbox" type="checkbox" disabled>`);
+									});
 									// set CSS properties to parent eliment
 									var childOptionsContent = document.getElementById(`${ element['key'] }_removeOption`);
 									childOptionsContent.parentElement.id = element['key'];
 									childOptionsContent.parentElement.classList.add('uk-inline');
 									childOptionsContent.parentElement.style.display = 'block';
+									childOptionsContent.addEventListener('click', (event) => {
+										formElement['options'].splice(index, 1);
+											var currentOptionDiv = event.target.parentElement;
+											// remove element from DOM
+											document.getElementById(`${ formElement['key'] }_options`).removeChild(currentOptionDiv);
+											editPreviewOptions(`<input class="uk-checkbox" type="checkbox" disabled>`);
+									});
 								});
-								editPreviewOptions();
+								editPreviewOptions(`<input class="uk-checkbox" type="checkbox" disabled>`);
 							} else {
 								var rawOption = {
 									key: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
@@ -627,39 +756,15 @@ class idf {
 									<div id="previewOptions">
 									</div>
 								`;
-								function editPreviewOptions() {
-									var previewOptions = document.querySelector(`#${ formElement['key'] } #previewOptions`);
-									previewOptions.innerHTML = ``;
-									formElement['options'].forEach((element, index) => {
-										var span = document.createElement('span');
-										if (element['value'] != '') {
-											span.innerHTML = `${ element['value'] }`;
-										} else {
-											span.innerHTML = `option ${ index + 1 }`;
-										}
-										previewOptions.appendChild(span);
-										span.style.display = 'block';
-										span.style.marginBottom = '-20px';
-										span.classList.add('short-answer-text')
-									});
-								}
-								editPreviewOptions();
-								// assign keyup event for new textInput
-								var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
-								var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
-								shortTextInput.addEventListener('keyup', (event) => {
-									// assign text to preview text
-									titlePreview.innerHTML = event.target.value;
-									formElement['label'] = event.target.value;
-									formElement['placeholder'] = event.target.value;
-								});
+								editPreviewOptions(`<input class="uk-checkbox" type="checkbox" disabled>`);
 	
 								var rawOptionField = document.getElementById(`${ rawOption['key'] }_option`);
+								rawOptionField.placeholder = 'Option 1';
 								rawOptionField.addEventListener('keyup', (event) => {
 									formElement['options'].forEach(element => {
 										if (element['key'] == getByKey(event.target.id)) {
 											element['value'] = event.target.value;
-											editPreviewOptions();
+											editPreviewOptions(`<input class="uk-checkbox" type="checkbox" disabled>`);
 										}
 									});
 								});
@@ -673,28 +778,24 @@ class idf {
 											var currentOptionDiv = event.target.parentElement;
 											// remove element from DOM
 											document.getElementById(`${ formElement['key'] }_options`).removeChild(currentOptionDiv);
-											editPreviewOptions();
+											editPreviewOptions(`<input class="uk-checkbox" type="checkbox" disabled>`);
 										}
 									});
 								});
 							}
-							function editPreviewOptions() {
-								var previewOptions = document.querySelector(`#${ formElement['key'] } #previewOptions`);
-								previewOptions.innerHTML = ``;
-								formElement['options'].forEach((element, index) => {
-									var span = document.createElement('span');
-									if (element['value'] != '') {
-										span.innerHTML = `${ element['value'] }`;
-									} else {
-										span.innerHTML = `option ${ index + 1 }`;
-									}
-									previewOptions.appendChild(span);
-									span.style.display = 'block';
-									span.style.marginBottom = '-20px';
-									span.classList.add('short-answer-text')
-								});
+							// bind previous options to DOM if present
+							var checkbox_title = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+							var checkbox_title_preview = document.getElementById(`${ formElement['key'] }_title_preview`);
+							if (formElement['placeholder'] != '') {
+								checkbox_title.value = formElement['placeholder'];
+								checkbox_title_preview.innerHTML = formElement['placeholder'];
+							} else {
+								checkbox_title.value = '';
+								checkbox_title.placeholder = 'Question Name';
+								checkbox_title_preview.innerHTML = 'Untitled Question'
 							}
-							editPreviewOptions();
+
+							editPreviewOptions(`<input class="uk-checkbox" type="checkbox" disabled>`);
 
 							// assign keyup event for new textInput
 							var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
@@ -722,27 +823,32 @@ class idf {
 									<i id="${ rawOption['key'] }_removeOption" class="material-icons input-remove" uk-tooltip="title: Remove; pos: bottom">clear</i>	
 									<input id="${ rawOption['key'] }_option" style="padding-left:40px;" class="uk-input" type="text">
 								`;
-								
 								// set CSS properties to parent eliment
 								options.insertBefore(newOption, options.childNodes[formElement['options'].length]); 
+								document.getElementById(`${ rawOption['key'] }_option`).placeholder = `Option ${ formElement['options'].length }`;
+
 								var childOptionsContent = document.getElementById(`${ rawOption['key'] }_removeOption`);
 								childOptionsContent.parentElement.id = rawOption['key'];
 								childOptionsContent.parentElement.classList.add('uk-inline');
 								childOptionsContent.parentElement.style.display = 'block';
-								editPreviewOptions();
+								editPreviewOptions(`<input class="uk-checkbox" type="checkbox" disabled>`);
 								
 								// assign event handkler to pass data to the array
-								document.getElementById(`${ rawOption['key'] }_option`).addEventListener('keyup', (event) => {
+								var checkbox_option = document.getElementById(`${ rawOption['key'] }_option`);
+								checkbox_option.addEventListener('keyup', (event) => {
+									console.log(event);
 									formElement['options'].forEach(element => {
 										if (element['key'] == getByKey(event.target.id)) {
 											element['value'] = event.target.value;
-											editPreviewOptions();
+											editPreviewOptions(`<input class="uk-checkbox" type="checkbox" disabled>`);
 										}
 									});
 								});
 
 								// add click event handler to remove element
-								document.getElementById(`${ rawOption['key'] }_removeOption`).addEventListener('click', (event) => {
+								var checkbox_remove = document.getElementById(`${ rawOption['key'] }_removeOption`);
+								checkbox_remove.addEventListener('click', (event) => {
+									console.log(event);
 									formElement['options'].forEach((element, index) => {
 										if (element['key'] == getByKey(event.target.id)) {
 											// remove option
@@ -750,13 +856,43 @@ class idf {
 											var currentOptionDiv = event.target.parentElement;
 											// remove element from DOM
 											document.getElementById(`${ formElement['key'] }_options`).removeChild(currentOptionDiv);
-											editPreviewOptions();
+											editPreviewOptions(`<input class="uk-checkbox" type="checkbox" disabled>`);
 										}
 									});
 								});
 							});
 						break;
+						// Dropdown selection
 						case 'dropdown':
+							function editPreviewOptions() {
+								var previewOptions = document.querySelector(`#${ formElement['key'] } #previewOptions`);
+								previewOptions.innerHTML = ``;
+								formElement['options'].forEach((element, index) => {
+									var div = document.createElement('div');
+			
+									var label = document.createElement('label');
+									label.innerHTML = `<spa>${ index + 1 }.</span>`;
+									previewOptions.insertBefore(label, span);
+									label.classList.add('input-preview-icon');
+			
+									var span = document.createElement('span');
+									if (element['value'] != '') {
+										span.innerHTML = `${ element['value'] }`;
+									} else {
+										span.innerHTML = `Option ${ index + 1 }`;
+									}
+									span.style.display = 'block';
+									span.style.marginBottom = '-20px';
+									span.style.marginTop = '-25px';
+									span.style.paddingLeft = '25px';
+									span.classList.add('short-answer-text');
+			
+									div.appendChild(label);
+									div.appendChild(span);
+									previewOptions.appendChild(div);
+								});
+							}
+							formElement['controlType'] = 'dropdown';
 							selectedType.placeholder = 'Dropdown';
 							if (formElement['options']) {
 								selectedQuestionDOM.innerHTML = `
@@ -786,33 +922,7 @@ class idf {
 									<div id="previewOptions">
 									</div>
 								`;
-								function editPreviewOptions() {
-									var previewOptions = document.querySelector(`#${ formElement['key'] } #previewOptions`);
-									previewOptions.innerHTML = ``;
-									formElement['options'].forEach((element, index) => {
-										var span = document.createElement('span');
-										if (element['value'] != '') {
-											span.innerHTML = `${ element['value'] }`;
-										} else {
-											span.innerHTML = `option ${ index + 1 }`;
-										}
-										previewOptions.appendChild(span);
-										span.style.display = 'block';
-										span.style.marginBottom = '-20px';
-										span.classList.add('short-answer-text')
-									});
-								}
-								// bind previous options to DOM if present
-								var dropDown_title = document.querySelector(`#${ formElement['key'] } #short_text_input`);
-								var dropDown_title_preview = document.getElementById(`${ formElement['key'] }_title_preview`);
-								if (formElement['placeholder'] != '') {
-									dropDown_title.placeholder = formElement['placeholder'];
-									dropDown_title_preview.innerHTML = formElement['placeholder'];
-								} else {
-									dropDown_title.placeholder = 'Question Name';
-									dropDown_title_preview.innerHTML = 'Untitled Question'
-								}
-
+								
 								var options = document.getElementById(`${ formElement['key'] }_options`);
 								formElement['options'].forEach((element, index) => {
 									var newOption = document.createElement('div');
@@ -822,12 +932,24 @@ class idf {
 										<input id="${ element['key'] }_option" style="padding-left:40px;" class="uk-input" type="text">
 									`;
 									options.insertBefore(newOption, options.childNodes[index]); 
-									document.getElementById(`${ element['key'] }_option`).placeholder = element['value'];
+									document.getElementById(`${ element['key'] }_option`).value = element['value'];
+									document.getElementById(`${ element['key'] }_option`).placeholder = ` Option ${ index + 1 }`;
+									document.getElementById(`${ element['key'] }_option`).addEventListener('keyup', (event) => {
+										element['value'] = event.target.value;
+										editPreviewOptions();
+									});
 									// set CSS properties to parent eliment
 									var childOptionsContent = document.getElementById(`${ element['key'] }_removeOption`);
 									childOptionsContent.parentElement.id = element['key'];
 									childOptionsContent.parentElement.classList.add('uk-inline');
 									childOptionsContent.parentElement.style.display = 'block';
+									childOptionsContent.addEventListener('click', (event) => {
+										formElement['options'].splice(index, 1);
+											var currentOptionDiv = event.target.parentElement;
+											// remove element from DOM
+											document.getElementById(`${ formElement['key'] }_options`).removeChild(currentOptionDiv);
+											editPreviewOptions();
+									});
 								});
 								editPreviewOptions();
 							} else {
@@ -871,34 +993,10 @@ class idf {
 									<div id="previewOptions">
 									</div>
 								`;
-								function editPreviewOptions() {
-									var previewOptions = document.querySelector(`#${ formElement['key'] } #previewOptions`);
-									previewOptions.innerHTML = ``;
-									formElement['options'].forEach((element, index) => {
-										var span = document.createElement('span');
-										if (element['value'] != '') {
-											span.innerHTML = `${ element['value'] }`;
-										} else {
-											span.innerHTML = `option ${ index + 1 }`;
-										}
-										previewOptions.appendChild(span);
-										span.style.display = 'block';
-										span.style.marginBottom = '-20px';
-										span.classList.add('short-answer-text')
-									});
-								}
 								editPreviewOptions();
-								// assign keyup event for new textInput
-								var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
-								var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
-								shortTextInput.addEventListener('keyup', (event) => {
-									// assign text to preview text
-									titlePreview.innerHTML = event.target.value;
-									formElement['label'] = event.target.value;
-									formElement['placeholder'] = event.target.value;
-								});
 	
 								var rawOptionField = document.getElementById(`${ rawOption['key'] }_option`);
+								rawOptionField.placeholder = 'Option 1';
 								rawOptionField.addEventListener('keyup', (event) => {
 									formElement['options'].forEach(element => {
 										if (element['key'] == getByKey(event.target.id)) {
@@ -922,22 +1020,18 @@ class idf {
 									});
 								});
 							}
-							function editPreviewOptions() {
-								var previewOptions = document.querySelector(`#${ formElement['key'] } #previewOptions`);
-								previewOptions.innerHTML = ``;
-								formElement['options'].forEach((element, index) => {
-									var span = document.createElement('span');
-									if (element['value'] != '') {
-										span.innerHTML = `${ element['value'] }`;
-									} else {
-										span.innerHTML = `option ${ index + 1 }`;
-									}
-									previewOptions.appendChild(span);
-									span.style.display = 'block';
-									span.style.marginBottom = '-20px';
-									span.classList.add('short-answer-text')
-								});
+							// bind previous options to DOM if present
+							var dropDown_title = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+							var dropDown_title_preview = document.getElementById(`${ formElement['key'] }_title_preview`);
+							if (formElement['placeholder'] != '') {
+								dropDown_title.value = formElement['placeholder'];
+								dropDown_title_preview.innerHTML = formElement['placeholder'];
+							} else {
+								dropDown_title.value = '';
+								dropDown_title.placeholder = 'Question Name';
+								dropDown_title_preview.innerHTML = 'Untitled Question'
 							}
+							
 							editPreviewOptions();
 
 							// assign keyup event for new textInput
@@ -969,6 +1063,8 @@ class idf {
 								
 								// set CSS properties to parent eliment
 								options.insertBefore(newOption, options.childNodes[formElement['options'].length]); 
+								document.getElementById(`${ rawOption['key'] }_option`).placeholder = `Option ${ formElement['options'].length }`;
+
 								var childOptionsContent = document.getElementById(`${ rawOption['key'] }_removeOption`);
 								childOptionsContent.parentElement.id = rawOption['key'];
 								childOptionsContent.parentElement.classList.add('uk-inline');
@@ -976,7 +1072,9 @@ class idf {
 								editPreviewOptions();
 								
 								// assign event handkler to pass data to the array
-								document.getElementById(`${ rawOption['key'] }_option`).addEventListener('keyup', (event) => {
+								var dropdown_btn_option = document.getElementById(`${ rawOption['key'] }_option`);
+								dropdown_btn_option.addEventListener('keyup', (event) => {
+									console.log(event);
 									formElement['options'].forEach(element => {
 										if (element['key'] == getByKey(event.target.id)) {
 											element['value'] = event.target.value;
@@ -986,7 +1084,9 @@ class idf {
 								});
 
 								// add click event handler to remove element
-								document.getElementById(`${ rawOption['key'] }_removeOption`).addEventListener('click', (event) => {
+								var dropdownBtn_remove = document.getElementById(`${ rawOption['key'] }_removeOption`);
+								dropdownBtn_remove.addEventListener('click', (event) => {
+									console.log(event);
 									formElement['options'].forEach((element, index) => {
 										if (element['key'] == getByKey(event.target.id)) {
 											// remove option
