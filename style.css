@@ -80,6 +80,19 @@
 	box-shadow: 2px 2px 3px #999;
 }
 
+.float-left {
+	position: fixed;
+	width: 60px;
+	height: 60px;
+	bottom: 40px;
+	left: 40px;
+	background-color: #35a7d6;
+	color: #FFF;
+	border-radius: 50px;
+	text-align: center;
+	box-shadow: 2px 2px 3px #999;
+}
+
 ul,
 li {
 	list-style: none;
@@ -244,6 +257,9 @@ h4 {
 	color: white;
 }
 
+#idf_submit_btn:hover {
+	color: white;
+}
 
 ul {
 	text-align: center;
@@ -402,6 +418,17 @@ ul > li {
     top: 6px;
     bottom: 0;
     width: 40px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: #999;
+    font-size: 17px;
+}
+
+.input-preview-icon {
+	position: relative;
+    top: 13px;
+    bottom: 0;
     display: inline-flex;
     justify-content: center;
     align-items: center;
