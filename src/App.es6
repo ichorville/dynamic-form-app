@@ -1,11 +1,8 @@
 
 "use strict";
-
+import styles from '../style.css'
 import UIkit from 'uikit';
-import Icons from 'uikit/dist/js/uikit-icons';
 
-// loads the icon pluggin
-UIkit.use(Icons);
 
 class idf {
 
@@ -1098,6 +1095,53 @@ class idf {
 										}
 									});
 								});
+							});
+						break;
+						case 'date':
+							formElement['controlType'] = 'date';
+							selectedType.placeholder = 'Date';
+							selectedQuestionDOM.innerHTML = `
+								<div class="uk-margin">
+									<label class="uk-form-label" for="form-horizontal-text">Question Name</label>
+									<div class="uk-form-controls">
+										<input 
+											id="short_text_input"
+											class="uk-input" 
+											type="text" 
+											placeholder="Question Name">
+									</div>
+								</div>
+								<div class="uk-margin">
+									<label class="uk-form-label" for="form-horizontal-text">Content</label>
+									<div class="uk-form-controls">
+										<input 
+											class="uk-input" 
+											type="text" 
+											disabled
+											placeholder="Date">
+									</div>
+								</div>
+							`;
+							hiddenElement.innerHTML = `
+								<h1 id="${ formElement['key'] }_title_preview" class="question-preview">Untitled Question</h1>
+								<span class="short-answer-text">Date</span>
+								<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);margin-top: -10px;"></div>
+							`;
+							if (formElement['placeholder'] != '') {
+								// populate DOM of previous data
+								var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+								var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
+								shortTextInput.value = formElement['placeholder'];
+								titlePreview.innerHTML = formElement['placeholder'];
+							}
+							// assign keyup event for new textInput
+							var shortTextInput = document.querySelector(`#${ formElement['key'] } #short_text_input`);
+							var titlePreview = document.getElementById(`${ formElement['key'] }_title_preview`);
+							shortTextInput.addEventListener('keyup', (event) => {
+								// assign text to preview text
+								titlePreview.innerHTML = event.target.value;
+								formElement['label'] = event.target.value;
+								formElement['placeholder'] = event.target.value;
 							});
 						break;
 					}
