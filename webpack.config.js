@@ -25,7 +25,13 @@ module.exports = {
 	},
 	module: {
 		loaders: [
-			{ test: /\.es6?$/, exclude: /node_modules/, loader: 'babel' }
+			{ 	test: /\.es6?$/, exclude: /node_modules/, loader: 'babel' },
+			// { 	test: /\.css$/, loader: 'style-loader!css-loader' }
+			{
+				test: /\.css/,
+				loaders: ['style', 'css'],
+				include: __dirname + '/src'
+			}
 		]
 	},
 	plugins: plugins
