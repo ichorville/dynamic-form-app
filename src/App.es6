@@ -1,13 +1,16 @@
 
 "use strict";
-import styles from '../style.css'
+// import styles from '../style.css'
 import UIkit from 'uikit';
 
 
 class idf {
-
 	constructor(selector) {
 		this.selector = document.querySelector(selector);
+		this.idf_form_object = {
+			title: '',
+			formElements: []
+		};
 	}
 
 	html(content = null) {
@@ -19,11 +22,6 @@ class idf {
 
 	init(content = null) {
 		if (content == null) {
-			let idf_form_object = {
-				title: '',
-				formElements: []
-			};
-
 			// Add form title field with floating button
 			this.selector.innerHTML = `
 				<div class="uk-container">
@@ -58,13 +56,9 @@ class idf {
 				</div>
 			`;
 
-			// make form title editable
-			var formTitle = document.getElementById('form_title_parent');
-			formTitle.addEventListener('click', makeTitleEditable);
-
 			// make each added question editable
-			function editQuestion(event) {
-				idf_form_object['formElements'].forEach(element => {
+			let editQuestion = (event) => {
+				this.idf_form_object['formElements'].forEach((element) => {
 					var card = document.getElementById(`${ element['key'] }_parent`);
 					if (card.children[0].id == getByKey(event.target.id)) {
 						card.children[0].classList.remove('inactive');
@@ -87,18 +81,22 @@ class idf {
 			}
 
 			// make form title editable
-			function makeTitleEditable(event) {
+			let makeTitleEditable = (event) => {
 				formTitle.children[0].classList.remove('inactive');
 				formTitle.children[0].classList.add('active');
 				formTitle.removeEventListener('click', makeTitleEditable);
 
-				idf_form_object['formElements'].forEach(element => {
+				this.idf_form_object['formElements'].forEach((element) => {
 					var questionCard = document.getElementById(`${ element['key'] }_parent`);
 					questionCard.children[0].classList.remove('active');
 					questionCard.children[0].classList.add('inactive');
 					questionCard.addEventListener('click', editQuestion);
 				});
 			}
+
+			// make form title editable
+			var formTitle = document.getElementById('form_title_parent');
+			formTitle.addEventListener('click', makeTitleEditable);
 
 			// splice id string
 			function getByKey(key) {
@@ -111,14 +109,14 @@ class idf {
 			var formInput = document.getElementById('form-input');
 			var formTitlePreview = document.getElementById('form-title-preview');
 			formInput.addEventListener('keyup', (event) => {
-				idf_form_object['title'] = event.target.value;
+				this.idf_form_object['title'] = event.target.value;
 				formTitlePreview.innerHTML = event.target.value;
 			});
 
 			this.idf_add_btn = document.getElementById('idf_add_btn');
-			this.idf_add_btn.addEventListener('click', function (event) {
+			this.idf_add_btn.addEventListener('click', (event) => {
 				this.div_form = document.getElementById('formElements');
-
+				
 				let formElement = {
 					key: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
 					label: '',
@@ -126,10 +124,10 @@ class idf {
 					controlType: '',
 					type: '',
 					required: false,
-					order: idf_form_object['formElements'].length + 1,
+					order: this.idf_form_object['formElements'].length + 1,
 					placeholder: '',
 				};
-				idf_form_object['formElements'].push(formElement);
+				this.idf_form_object['formElements'].push(formElement);
 
 				var div_element = document.createElement('div');
 				div_element.innerHTML = `
@@ -235,7 +233,7 @@ class idf {
 				createdCard.id = `${ formElement['key'] }_parent`;
 				
 				// make all previous cards inactive
-				idf_form_object['formElements'].forEach(element => {
+				this.idf_form_object['formElements'].forEach(element => {
 					var formCard = document.getElementById(`${ element['key'] }_parent`);
 					if (formCard.children[0].id != formElement['key']) {
 						formCard.children[0].classList.remove('active');
@@ -253,7 +251,7 @@ class idf {
 				this.requiredButton = document.getElementById(`${ formElement['key'] }_lbl`);
 				this.requiredButton.addEventListener('click', (event) => {
 					// get relevant formElement
-					idf_form_object['formElements'].forEach(element => {
+					this.idf_form_object['formElements'].forEach(element => {
 						if (element['key'] == getByKey(event.target.id)) {
 							// change formElement required status
 							element['required'] = !element['required'];
@@ -263,10 +261,10 @@ class idf {
 
 				// remove formElement
 				this.deleteFormElementBtn = document.getElementById(`${ formElement['key'] }_remove`);
-				this.deleteFormElementBtn.addEventListener('click', function (event) {
-					var x = idf_form_object['formElements'].forEach((element, index) => {
+				this.deleteFormElementBtn.addEventListener('click', (event) => {
+					var x = this.idf_form_object['formElements'].forEach((element, index) => {
 						if (element['key'] == getByKey(event.target.id)) {
-							idf_form_object['formElements'].splice(index, 1);
+							this.idf_form_object['formElements'].splice(index, 1);
 							// delete relative html content
 							this.currentDiv = document.getElementById(`${ formElement['key'] }`);
 							document.getElementById('formElements').removeChild(this.currentDiv.parentNode);
@@ -833,7 +831,6 @@ class idf {
 								// assign event handkler to pass data to the array
 								var checkbox_option = document.getElementById(`${ rawOption['key'] }_option`);
 								checkbox_option.addEventListener('keyup', (event) => {
-									console.log(event);
 									formElement['options'].forEach(element => {
 										if (element['key'] == getByKey(event.target.id)) {
 											element['value'] = event.target.value;
@@ -845,7 +842,6 @@ class idf {
 								// add click event handler to remove element
 								var checkbox_remove = document.getElementById(`${ rawOption['key'] }_removeOption`);
 								checkbox_remove.addEventListener('click', (event) => {
-									console.log(event);
 									formElement['options'].forEach((element, index) => {
 										if (element['key'] == getByKey(event.target.id)) {
 											// remove option
@@ -1071,7 +1067,6 @@ class idf {
 								// assign event handkler to pass data to the array
 								var dropdown_btn_option = document.getElementById(`${ rawOption['key'] }_option`);
 								dropdown_btn_option.addEventListener('keyup', (event) => {
-									console.log(event);
 									formElement['options'].forEach(element => {
 										if (element['key'] == getByKey(event.target.id)) {
 											element['value'] = event.target.value;
@@ -1083,7 +1078,6 @@ class idf {
 								// add click event handler to remove element
 								var dropdownBtn_remove = document.getElementById(`${ rawOption['key'] }_removeOption`);
 								dropdownBtn_remove.addEventListener('click', (event) => {
-									console.log(event);
 									formElement['options'].forEach((element, index) => {
 										if (element['key'] == getByKey(event.target.id)) {
 											// remove option
@@ -1148,8 +1142,15 @@ class idf {
 				});
 			});
 		}
-		return this.selector;
+		return this.selector, this.idf_form_object;
 	}
+
+	submit(content = null) {
+		// document.getElementById(`idf_submit_btn`).addEventListener('click', (event) => {
+		// 	return this.idf_form_object;
+		// });
+		return this.idf_form_object
+;	}
 }
 
 // export the class instance via a function call
