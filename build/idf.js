@@ -47,14 +47,11 @@ window["idf"] =
 
 	
 	"use strict";
+	// import styles from '../style.css'
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _style = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../style.css\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-	
-	var _style2 = _interopRequireDefault(_style);
-	
-	var _uikit = __webpack_require__(2);
+	var _uikit = __webpack_require__(1);
 	
 	var _uikit2 = _interopRequireDefault(_uikit);
 	
@@ -67,6 +64,10 @@ window["idf"] =
 			_classCallCheck(this, idf);
 	
 			this.selector = document.querySelector(selector);
+			this.idf_form_object = {
+				title: '',
+				formElements: []
+			};
 		}
 	
 		_createClass(idf, [{
@@ -82,13 +83,26 @@ window["idf"] =
 		}, {
 			key: 'init',
 			value: function init() {
+				var _this = this;
+	
 				var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 	
 				if (content == null) {
 	
+					// splice id string
+					var _getByKey = function _getByKey(key) {
+						var currentKey = key;
+						var selector = currentKey.indexOf('_');
+						currentKey = currentKey.substring(0, selector != -1 ? selector : currentKey.length);
+						return currentKey; // return element key which corresponds to the actual formElement
+					};
+	
+					// Add form title field with floating button
+					this.selector.innerHTML = '\n\t\t\t\t<div class="uk-container">\n\t\t\t\t<div uk-alert>\n\t\t\t\t\tALERT: Select Question Field To Edit \n\t\t\t\t</div>\n\t\t\t\t\t<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">\n\t\t\t\t\t\t<div id="formElements">\n\t\t\t\t\t\t\t<div id="form_title_parent">\n\t\t\t\t\t\t\t\t<div id="form_title" class="uk-card uk-card-default uk-card-body inactive">\n\t\t\t\t\t\t\t\t\t<form id="title-form" class="uk-form-horizontal uk-margin-large">\n\t\t\t\t\t\t\t\t\t\t<div class="uk-margin">\n\t\t\t\t\t\t\t\t\t\t\t<label class="uk-form-label" for="form-horizontal-text">Form Name</label>\n\t\t\t\t\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t\t\t\t\t<input class="uk-input" id="form-input" type="text" placeholder="Please Enter Form Name...">\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t\t\t\t<div class="uk-margin hidden">\n\t\t\t\t\t\t\t\t\t\t<h1 id="form-title-preview">Untitled form</h1>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<a id="idf_add_btn" class="float" uk-tooltip="title: Add Question; pos: bottom">\n\t\t\t\t\t\t<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE145;</i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a id="idf_submit_btn" class="float-left" uk-tooltip="title: Submit Form; pos: bottom">\n\t\t\t\t\t\t<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE876;</i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t';
+	
 					// make each added question editable
-					var _editQuestion = function _editQuestion(event) {
-						idf_form_object['formElements'].forEach(function (element) {
+					var editQuestion = function editQuestion(event) {
+						_this.idf_form_object['formElements'].forEach(function (element) {
 							var card = document.getElementById(element['key'] + '_parent');
 							if (card.children[0].id == _getByKey(event.target.id)) {
 								card.children[0].classList.remove('inactive');
@@ -97,52 +111,32 @@ window["idf"] =
 								formTitle.children[0].classList.add('inactive');
 								formTitle.addEventListener('click', _makeTitleEditable);
 								// remove event handler to avoid multiple triggering of the function 
-								card.removeEventListener('click', _editQuestion);
+								card.removeEventListener('click', editQuestion);
 							} else {
 								card.children[0].classList.remove('active');
 								card.children[0].classList.add('inactive');
 								formTitle.children[0].classList.remove('active');
 								formTitle.children[0].classList.add('inactive');
 								// make all other questions editable
-								card.addEventListener('click', _editQuestion);
+								card.addEventListener('click', editQuestion);
 								formTitle.addEventListener('click', _makeTitleEditable);
 							}
 						});
 					};
 	
 					// make form title editable
-	
-	
 					var _makeTitleEditable = function _makeTitleEditable(event) {
 						formTitle.children[0].classList.remove('inactive');
 						formTitle.children[0].classList.add('active');
 						formTitle.removeEventListener('click', _makeTitleEditable);
 	
-						idf_form_object['formElements'].forEach(function (element) {
+						_this.idf_form_object['formElements'].forEach(function (element) {
 							var questionCard = document.getElementById(element['key'] + '_parent');
 							questionCard.children[0].classList.remove('active');
 							questionCard.children[0].classList.add('inactive');
-							questionCard.addEventListener('click', _editQuestion);
+							questionCard.addEventListener('click', editQuestion);
 						});
 					};
-	
-					// splice id string
-	
-	
-					var _getByKey = function _getByKey(key) {
-						var currentKey = key;
-						var selector = currentKey.indexOf('_');
-						currentKey = currentKey.substring(0, selector != -1 ? selector : currentKey.length);
-						return currentKey; // return element key which corresponds to the actual formElement
-					};
-	
-					var idf_form_object = {
-						title: '',
-						formElements: []
-					};
-	
-					// Add form title field with floating button
-					this.selector.innerHTML = '\n\t\t\t\t<div class="uk-container">\n\t\t\t\t<div uk-alert>\n\t\t\t\t\tALERT: Select Question Field To Edit \n\t\t\t\t</div>\n\t\t\t\t\t<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">\n\t\t\t\t\t\t<div id="formElements">\n\t\t\t\t\t\t\t<div id="form_title_parent">\n\t\t\t\t\t\t\t\t<div id="form_title" class="uk-card uk-card-default uk-card-body inactive">\n\t\t\t\t\t\t\t\t\t<form id="title-form" class="uk-form-horizontal uk-margin-large">\n\t\t\t\t\t\t\t\t\t\t<div class="uk-margin">\n\t\t\t\t\t\t\t\t\t\t\t<label class="uk-form-label" for="form-horizontal-text">Form Name</label>\n\t\t\t\t\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t\t\t\t\t<input class="uk-input" id="form-input" type="text" placeholder="Please Enter Form Name...">\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t\t\t\t<div class="uk-margin hidden">\n\t\t\t\t\t\t\t\t\t\t<h1 id="form-title-preview">Untitled form</h1>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<a id="idf_add_btn" class="float" uk-tooltip="title: Add Question; pos: bottom">\n\t\t\t\t\t\t<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE145;</i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a id="idf_submit_btn" class="float-left" uk-tooltip="title: Submit Form; pos: bottom">\n\t\t\t\t\t\t<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE876;</i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t';
 	
 					// make form title editable
 					var formTitle = document.getElementById('form_title_parent');
@@ -151,13 +145,13 @@ window["idf"] =
 					var formInput = document.getElementById('form-input');
 					var formTitlePreview = document.getElementById('form-title-preview');
 					formInput.addEventListener('keyup', function (event) {
-						idf_form_object['title'] = event.target.value;
+						_this.idf_form_object['title'] = event.target.value;
 						formTitlePreview.innerHTML = event.target.value;
 					});
 	
 					this.idf_add_btn = document.getElementById('idf_add_btn');
 					this.idf_add_btn.addEventListener('click', function (event) {
-						this.div_form = document.getElementById('formElements');
+						_this.div_form = document.getElementById('formElements');
 	
 						var formElement = {
 							key: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
@@ -166,14 +160,14 @@ window["idf"] =
 							controlType: '',
 							type: '',
 							required: false,
-							order: idf_form_object['formElements'].length + 1,
+							order: _this.idf_form_object['formElements'].length + 1,
 							placeholder: ''
 						};
-						idf_form_object['formElements'].push(formElement);
+						_this.idf_form_object['formElements'].push(formElement);
 	
 						var div_element = document.createElement('div');
 						div_element.innerHTML = '\n\t\t\t\t\t<div id="' + formElement['key'] + '" class="uk-card uk-card-default uk-card-body active">\t\t\t\t\t\n\t\t\t\t\t\t<form class="uk-form-horizontal uk-margin-large">\n\t\t\t\t\t\t\t<div class="uk-margin">\n\t\t\t\t\t\t\t\t<label class="uk-form-label" for="form-horizontal-text">Question Type</label>\n\t\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t\t<input id="selectedType" class="uk-input" disabled type="text" placeholder="Short answer">\n\t\t\t\t\t\t\t\t\t<div class="dropdownContain">\n\t\t\t\t\t\t\t\t\t\t<div class="dropOut">\n\t\t\t\t\t\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t\t\t\t\t\t<li id="short_text">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<i id="short_text" class="material-icons">short_text</i>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<span id="short_text" class="icon-text">Short answer</span>\n\t\t\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t\t<li id="paragraph">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<i id="paragraph" class="material-icons">subject</i>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<span id="paragraph" class="icon-text">Paragraph</span>\n\t\t\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t\t<li id="multiple_choice" style="border-top: 1px solid rgba(0,0,0,0.12);">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<i id="multiple_choice" class="material-icons">radio_button_checked</i>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<span id="multiple_choice" class="icon-text">Multiple Choice</span>\n\t\t\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t\t<li id="checkbox">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<i id="checkbox" class="material-icons">check_box</i>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<span id="checkbox" class="icon-text">Checkboxes</span>\n\t\t\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t\t<li id="dropdown">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<i id="dropdown" class="material-icons">arrow_drop_down_circle</i>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<span id="dropdown" class="icon-text">Dropdown</span>\n\t\t\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t\t<li id="date" style="border-top: 1px solid rgba(0,0,0,0.12);">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<i id="date" class="material-icons">event</i>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<span id="date" class="icon-text">Date</span>\n\t\t\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div id="selected_question_dom" class="uk-margin">\n\t\t\t\t\t\t\t\t<!-- Selected Question Type Content -->\n\t\t\t\t\t\t\t\t<div class="uk-margin">\n\t\t\t\t\t\t\t\t\t<label class="uk-form-label" for="form-horizontal-text">Question Name</label>\n\t\t\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t\t\t<input \n\t\t\t\t\t\t\t\t\t\t\tid="short_text_input"\n\t\t\t\t\t\t\t\t\t\t\tclass="uk-input" \n\t\t\t\t\t\t\t\t\t\t\ttype="text" \n\t\t\t\t\t\t\t\t\t\t\tplaceholder="Question Name">\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class="uk-margin">\n\t\t\t\t\t\t\t\t\t<label class="uk-form-label" for="form-horizontal-text">Content</label>\n\t\t\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t\t\t<input \n\t\t\t\t\t\t\t\t\t\t\tclass="uk-input" \n\t\t\t\t\t\t\t\t\t\t\ttype="text" \n\t\t\t\t\t\t\t\t\t\t\tdisabled\n\t\t\t\t\t\t\t\t\t\t\tplaceholder="Short answer text">\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div id="bottom-controls" class="uk-margin">\n\t\t\t\t\t\t\t\t<div class="uk-form-controls uk-form-controls-text" style="display:flex;">\n\t\t\t\t\t\t\t\t\t<span id="selected-type"></span>\n\t\t\t\t\t\t\t\t\t<span style="flex: 1 1 auto;"></span>\n\t\t\t\t\t\t\t\t\t<ul class="tg-list">\n\t\t\t\t\t\t\t\t\t\t<i id="' + formElement['key'] + '_remove" class="material-icons" uk-tooltip="title: Remove Question; pos: bottom">delete</i>\n\t\t\t\t\t\t\t\t\t\t<span style="padding-left:25px;border-left: 1px solid #e0e0e0;height: 32px;margin: 0 16px;width: 0;"></span>\n\t\t\t\t\t\t\t\t\t\t<li class="tg-list-item" style="display:flex;margin-left:-10px;">\n\t\t\t\t\t\t\t\t\t\t\t<span style="padding-top: 4px;">Required :</span>\n\t\t\t\t\t\t\t\t\t\t\t<input class="tgl tgl-flip" id="' + formElement['key'] + '_cb" type="checkbox"/>\n\t\t\t\t\t\t\t\t\t\t\t<label id="' + formElement['key'] + '_lbl" class="tgl-btn" data-tg-off="Nope" data-tg-on="Yeah!" for="' + formElement['key'] + '_cb"\n\t\t\t\t\t\t\t\t\t\t\t\tstyle="margin-left:15px;"></label>\n\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</form>\n\t\t\t\t\t\t<div id="hiddenElement" class="uk-margin hidden">\n\t\t\t\t\t\t\t<h1 id="' + formElement['key'] + '_title_preview" class="question-preview">Untitled Question</h1>\n\t\t\t\t\t\t\t<span class="short-answer-text">Short answer text</span>\n\t\t\t\t\t\t\t<div style="border-bottom: 1px dotted rgba(0,0,0,0.38);margin-top: -10px;"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t';
-						this.div_form.appendChild(div_element);
+						_this.div_form.appendChild(div_element);
 	
 						// assign keyup event for raw textInput
 						var shortTextInput = document.querySelector('#' + formElement['key'] + ' #short_text_input');
@@ -190,13 +184,13 @@ window["idf"] =
 						createdCard.id = formElement['key'] + '_parent';
 	
 						// make all previous cards inactive
-						idf_form_object['formElements'].forEach(function (element) {
+						_this.idf_form_object['formElements'].forEach(function (element) {
 							var formCard = document.getElementById(element['key'] + '_parent');
 							if (formCard.children[0].id != formElement['key']) {
 								formCard.children[0].classList.remove('active');
 								formCard.children[0].classList.add('inactive');
 								// assign click event events to make each question editable
-								formCard.addEventListener('click', _editQuestion);
+								formCard.addEventListener('click', editQuestion);
 							}
 						});
 						// make form title inactive
@@ -205,10 +199,10 @@ window["idf"] =
 						formTitle.addEventListener('click', _makeTitleEditable);
 	
 						// set required status of formElement
-						this.requiredButton = document.getElementById(formElement['key'] + '_lbl');
-						this.requiredButton.addEventListener('click', function (event) {
+						_this.requiredButton = document.getElementById(formElement['key'] + '_lbl');
+						_this.requiredButton.addEventListener('click', function (event) {
 							// get relevant formElement
-							idf_form_object['formElements'].forEach(function (element) {
+							_this.idf_form_object['formElements'].forEach(function (element) {
 								if (element['key'] == _getByKey(event.target.id)) {
 									// change formElement required status
 									element['required'] = !element['required'];
@@ -217,13 +211,11 @@ window["idf"] =
 						});
 	
 						// remove formElement
-						this.deleteFormElementBtn = document.getElementById(formElement['key'] + '_remove');
-						this.deleteFormElementBtn.addEventListener('click', function (event) {
-							var _this = this;
-	
-							var x = idf_form_object['formElements'].forEach(function (element, index) {
+						_this.deleteFormElementBtn = document.getElementById(formElement['key'] + '_remove');
+						_this.deleteFormElementBtn.addEventListener('click', function (event) {
+							var x = _this.idf_form_object['formElements'].forEach(function (element, index) {
 								if (element['key'] == _getByKey(event.target.id)) {
-									idf_form_object['formElements'].splice(index, 1);
+									_this.idf_form_object['formElements'].splice(index, 1);
 									// delete relative html content
 									_this.currentDiv = document.getElementById('' + formElement['key']);
 									document.getElementById('formElements').removeChild(_this.currentDiv.parentNode);
@@ -231,8 +223,8 @@ window["idf"] =
 							});
 						});
 	
-						this.selectedQuestionType = document.querySelector('#' + formElement['key'] + ' .dropdownContain');
-						this.selectedQuestionType.addEventListener('click', function (event) {
+						_this.selectedQuestionType = document.querySelector('#' + formElement['key'] + ' .dropdownContain');
+						_this.selectedQuestionType.addEventListener('click', function (event) {
 	
 							var selectedType = document.querySelector('#' + formElement['key'] + ' #selectedType');
 							var selectedQuestionDOM = document.querySelector('#' + formElement['key'] + ' #selected_question_dom');
@@ -608,7 +600,6 @@ window["idf"] =
 										// assign event handkler to pass data to the array
 										var checkbox_option = document.getElementById(rawOption['key'] + '_option');
 										checkbox_option.addEventListener('keyup', function (event) {
-											console.log(event);
 											formElement['options'].forEach(function (element) {
 												if (element['key'] == _getByKey(event.target.id)) {
 													element['value'] = event.target.value;
@@ -620,7 +611,6 @@ window["idf"] =
 										// add click event handler to remove element
 										var checkbox_remove = document.getElementById(rawOption['key'] + '_removeOption');
 										checkbox_remove.addEventListener('click', function (event) {
-											console.log(event);
 											formElement['options'].forEach(function (element, index) {
 												if (element['key'] == _getByKey(event.target.id)) {
 													// remove option
@@ -784,7 +774,6 @@ window["idf"] =
 										// assign event handkler to pass data to the array
 										var dropdown_btn_option = document.getElementById(rawOption['key'] + '_option');
 										dropdown_btn_option.addEventListener('keyup', function (event) {
-											console.log(event);
 											formElement['options'].forEach(function (element) {
 												if (element['key'] == _getByKey(event.target.id)) {
 													element['value'] = event.target.value;
@@ -796,7 +785,6 @@ window["idf"] =
 										// add click event handler to remove element
 										var dropdownBtn_remove = document.getElementById(rawOption['key'] + '_removeOption');
 										dropdownBtn_remove.addEventListener('click', function (event) {
-											console.log(event);
 											formElement['options'].forEach(function (element, index) {
 												if (element['key'] == _getByKey(event.target.id)) {
 													// remove option
@@ -836,7 +824,17 @@ window["idf"] =
 						});
 					});
 				}
-				return this.selector;
+				return this.selector, this.idf_form_object;
+			}
+		}, {
+			key: 'submit',
+			value: function submit() {
+				var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+	
+				// document.getElementById(`idf_submit_btn`).addEventListener('click', (event) => {
+				// 	return this.idf_form_object;
+				// });
+				return this.idf_form_object;
 			}
 		}]);
 	
@@ -851,8 +849,7 @@ window["idf"] =
 	};
 
 /***/ }),
-/* 1 */,
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate) {/*! UIkit 3.0.0-beta.40 | http://www.getuikit.com | (c) 2014 - 2017 YOOtheme | MIT License */
@@ -12270,10 +12267,10 @@ window["idf"] =
 	
 	})));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3).setImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2).setImmediate))
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var apply = Function.prototype.apply;
@@ -12326,7 +12323,7 @@ window["idf"] =
 	};
 	
 	// setimmediate attaches itself to the global object
-	__webpack_require__(4);
+	__webpack_require__(3);
 	// On some exotic environments, it's not clear which object `setimmeidate` was
 	// able to install onto.  Search each possibility in the same order as the
 	// `setimmediate` library.
@@ -12340,7 +12337,7 @@ window["idf"] =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -12530,10 +12527,10 @@ window["idf"] =
 	    attachTo.clearImmediate = clearImmediate;
 	}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(5)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(4)))
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports) {
 
 	// shim for using process in browser
