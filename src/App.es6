@@ -24,10 +24,10 @@ class idf {
 		if (content == null) {
 			// Add form title field with floating button
 			this.selector.innerHTML = `
-				<div class="uk-container">
-				<div uk-alert>
-					ALERT: Select Question Field To Edit 
-				</div>
+				<div id="form-container" class="uk-container">
+					<div uk-alert>
+						ALERT: Select Question Field To Edit 
+					</div>
 					<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">
 						<div id="formElements">
 							<div id="form_title_parent">
@@ -48,10 +48,13 @@ class idf {
 						</div>
 					</div>
 					<a id="idf_add_btn" class="float" uk-tooltip="title: Add Question; pos: bottom">
-						<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE145;</i>
+						<i style="margin-top: 20px;font-size: 20px;" class="material-icons">&#xE145;</i>
 					</a>
 					<a id="idf_submit_btn" class="float-left" uk-tooltip="title: Submit Form; pos: bottom">
-						<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE876;</i>
+						<i style="margin-top: 20px;font-size: 20px;" class="material-icons">&#xE876;</i>
+					</a>
+					<a id="idf_preview_btn" class="float-top-right" uk-tooltip="title: Preview; pos: bottom">
+						<i style="margin-top: 20px;font-size: 20px;" class="material-icons">&#xE8F4;</i>
 					</a>
 				</div>
 			`;
@@ -113,6 +116,139 @@ class idf {
 				formTitlePreview.innerHTML = event.target.value;
 			});
 
+			this.idf_submit_btn = document.getElementById('idf_submit_btn');
+			this.idf_submit_btn.addEventListener('click', (event) => {
+				console.log(this.idf_form_object);
+			});
+
+			this.idf_preview_btn = document.getElementById('idf_preview_btn');
+			this.idf_preview_btn.addEventListener('click', (event) => {
+				var container = document.getElementById('form-container');
+				container.classList.add('hidden');
+				
+				var loader = document.createElement('div');
+				loader.id = 'loader';
+				loader.classList.add('wrapper', 'animated', 'fadeIn');
+				loader.innerHTML = `
+					<ul class="loader-list">
+						<li>
+							<div class="loader center"><span></span></div>
+						</li>
+					</ul>
+				`;
+				container.parentElement.appendChild(loader);
+
+				var preview_form = document.createElement('div');
+				preview_form.id = 'form-preview';
+				preview_form.classList.add('uk-container');
+
+				preview_form.innerHTML = `
+					<div uk-alert>
+						ALERT: Form Preview 
+					</div>
+					<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">
+						<div class="uk-first-column">
+							<div class="uk-card uk-card-default uk-card-body">
+								<form id="previewForm" class="uk-form-stacked">
+									<fieldset class="uk-fieldset">
+										<legend class="uk-legend">${ this.idf_form_object['title'] == '' ? 'Untitled Form' : this.idf_form_object['title'] }</legend>
+									</fieldset>
+								</form>
+							</div>
+						</div>
+					</div>
+					<a id="idf_back_btn" class="float-top-left" uk-tooltip="title: Back; pos: right">
+						<i style="margin-top: 20px;font-size: 20px;" class="material-icons">&#xE5C4;</i>
+					</a>
+				`;
+				container.parentElement.appendChild(preview_form);
+
+				var previewForm = document.getElementById('previewForm');
+				this.idf_form_object['formElements'].forEach((element) => {
+					var formDiv = document.createElement('div');
+					formDiv.classList.add('uk-margin');
+					formDiv.id = element['key'];
+					switch (element['controlType']) {
+						// Short text form 
+						case 'short_text':	
+							formDiv.innerHTML = `
+								<label class="uk-form-label" for="form-stacked-text">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</label>
+								<div class="uk-form-controls">
+									<input class="uk-input" id="form-stacked-text" type="text" placeholder="Some text...">
+								</div>
+							`;	
+							previewForm.appendChild(formDiv);
+						break;
+						// Paragraph form 
+						case 'paragraph':
+							formDiv.innerHTML = `
+								<label class="uk-form-label" for="form-stacked-text">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</label>
+								<div class="uk-form-controls">
+									<textarea class="uk-textarea" rows="5" placeholder="Textarea"></textarea>
+								</div>
+							`;
+							previewForm.appendChild(formDiv);
+						break;	
+						// Radio Button
+						case 'multiple_choice':
+							formDiv.innerHTML = `
+								<div class="uk-form-label">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</div>
+								<div id="preview_radio_options" class="uk-form-controls uk-form-controls-text">
+								</div>
+							`;
+							previewForm.appendChild(formDiv);
+							var currentPreviewOptions = document.querySelector(`#preview_radio_options`);
+							element['options'].forEach((option, index) => {
+								var optionLbl = document.createElement('label');
+								optionLbl.style.cssText = 'display:block';
+								optionLbl.innerHTML = `<input style="margin-right:5px;" class="uk-radio" type="radio" name="${ option['key'] }">${ option['value'] == '' ? 'Radio ' + (index + 1)  : option['value'] }</label>`;
+								currentPreviewOptions.appendChild(optionLbl);
+							});
+						break;
+						case 'checkbox':
+							formDiv.innerHTML = `
+								<div class="uk-form-label">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</div>
+								<div id="preview_checkbox_options" class="uk-form-controls">
+								</div>
+							`;
+							previewForm.appendChild(formDiv);
+							var currentPreviewOptions = document.querySelector(`#preview_checkbox_options`);
+							element['options'].forEach((option, index) => {
+								var optionLbl = document.createElement('label');
+								optionLbl.style.cssText = 'display:block';
+								optionLbl.innerHTML = `<input style="margin-right:5px;" class="uk-checkbox" type="checkbox" name="${ option['key'] }">${ option['value'] == '' ? 'Radio ' + (index + 1)  : option['value'] }</label>`;
+								currentPreviewOptions.appendChild(optionLbl);
+							});
+						break;
+						case 'dropdown':
+							formDiv.innerHTML = `
+								<label class="uk-form-label" for="form-horizontal-select">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</label>
+								<div class="uk-form-controls">
+									<select id="preview_select_options" class="uk-select" id="form-horizontal-select">
+									</select>
+								</div>
+							`;
+							previewForm.appendChild(formDiv);
+							var currentPreviewOptions = document.querySelector(`#preview_select_options`);							
+							element['options'].forEach((option, index) => {
+								var optionLbl = document.createElement('option');
+								optionLbl.innerHTML = `${ option['value'] == '' ? 'Option ' + (index + 1)  : option['value'] }`;
+								currentPreviewOptions.appendChild(optionLbl);
+							});
+						break;
+						case 'date':
+						break;					
+					}
+				});
+
+				// remover loader content from DOM
+				loader.classList.remove('fadeIn');
+				loader.classList.add('fadeOut');
+				setTimeout(() => {
+					container.parentElement.removeChild(loader);
+				}, 1000);
+			});
+
 			this.idf_add_btn = document.getElementById('idf_add_btn');
 			this.idf_add_btn.addEventListener('click', (event) => {
 				this.div_form = document.getElementById('formElements');
@@ -121,7 +257,7 @@ class idf {
 					key: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
 					label: '',
 					value: '',
-					controlType: '',
+					controlType: 'short_text',
 					type: '',
 					required: false,
 					order: this.idf_form_object['formElements'].length + 1,
@@ -1150,7 +1286,7 @@ class idf {
 		// 	return this.idf_form_object;
 		// });
 		return this.idf_form_object
-;	}
+	}
 }
 
 // export the class instance via a function call
