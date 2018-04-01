@@ -142,6 +142,7 @@ class idf {
 				preview_form.id = 'form-preview';
 				preview_form.classList.add('uk-container');
 
+				// Intial preview DOM element
 				preview_form.innerHTML = `
 					<div uk-alert>
 						ALERT: Form Preview 
@@ -157,12 +158,10 @@ class idf {
 							</div>
 						</div>
 					</div>
-					<a id="idf_back_btn" class="float-top-left" uk-tooltip="title: Back; pos: right">
-						<i style="margin-top: 20px;font-size: 20px;" class="material-icons">&#xE5C4;</i>
-					</a>
 				`;
 				container.parentElement.appendChild(preview_form);
 
+				// change prevew DOM according to formElement controlType
 				var previewForm = document.getElementById('previewForm');
 				this.idf_form_object['formElements'].forEach((element) => {
 					var formDiv = document.createElement('div');
@@ -205,6 +204,7 @@ class idf {
 								currentPreviewOptions.appendChild(optionLbl);
 							});
 						break;
+						// Checkbox
 						case 'checkbox':
 							formDiv.innerHTML = `
 								<div class="uk-form-label">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</div>
@@ -220,6 +220,7 @@ class idf {
 								currentPreviewOptions.appendChild(optionLbl);
 							});
 						break;
+						// Dropdown
 						case 'dropdown':
 							formDiv.innerHTML = `
 								<label class="uk-form-label" for="form-horizontal-select">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</label>
@@ -236,6 +237,7 @@ class idf {
 								currentPreviewOptions.appendChild(optionLbl);
 							});
 						break;
+						// Date and time
 						case 'date':
 						break;					
 					}
@@ -246,6 +248,23 @@ class idf {
 				loader.classList.add('fadeOut');
 				setTimeout(() => {
 					container.parentElement.removeChild(loader);
+				}, 1000);
+
+				setTimeout(() => {
+					var bach_btn = document.createElement('div');
+					bach_btn.innerHTML = `
+						<a id="idf_back_btn" class="float-top-left" uk-tooltip="title: Back; pos: right">
+							<i style="margin-top: 20px;font-size: 20px;" class="material-icons">&#xE5C4;</i>
+						</a>
+					`;
+					preview_form.appendChild(bach_btn);
+					// change back to Edit view
+					var backBtn = document.getElementById('idf_back_btn');
+					backBtn.addEventListener('click', function (event) {
+						var container = document.getElementById('form-container');
+						container.parentElement.removeChild(preview_form);
+						container.classList.remove('hidden');
+					});
 				}, 1000);
 			});
 
