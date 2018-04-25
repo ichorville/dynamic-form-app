@@ -926,21 +926,248 @@ window["idf"] =
 				return this.selector, this.idf_form_object;
 			}
 		}, {
+			key: 'getFormObject',
+			value: function getFormObject() {
+				return this.idf_form_object;
+			}
+		}, {
 			key: 'create',
 			value: function create() {
 				var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 	
 				console.log(content);
+	
+				if (content != null) {
+					this.final_form_object = content;
+	
+					this.selector.innerHTML = '\n\t\t\t\t\n\t\t\t';
+					var legitForm = document.createElement('div');
+					legitForm.id = 'legit_form';
+					legitForm.classList.add('uk-container');
+	
+					// Intial preview DOM element
+					legitForm.innerHTML = '\n\t\t\t\t<div uk-alert>\n\t\t\t\t\tALERT: Please Fill the Form Below \n\t\t\t\t</div>\n\t\t\t\t<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">\n\t\t\t\t\t<div class="uk-first-column">\n\t\t\t\t\t\t<div class="uk-card uk-card-default uk-card-body">\n\t\t\t\t\t\t\t<form id="legitForm" class="uk-form-stacked">\n\t\t\t\t\t\t\t\t<fieldset class="uk-fieldset">\n\t\t\t\t\t\t\t\t\t<legend class="uk-legend">' + (this.final_form_object['title'] == '' ? 'Untitled Form' : idf_form_object['title']) + '</legend>\n\t\t\t\t\t\t\t\t</fieldset>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t';
+					this.selector.appendChild(legitForm);
+	
+					var legitForm = document.getElementById('legitForm');
+					this.final_form_object['formElements'].forEach(function (element) {
+						var formDiv = document.createElement('div');
+						formDiv.classList.add('uk-margin');
+						formDiv.id = element['key'];
+						switch (element['controlType']) {
+							// Short text form 
+							case 'short_text':
+								formDiv.innerHTML = '\n\t\t\t\t\t\t\t<label id="' + element['key'] + '_finalFormElement_label" class="uk-form-label" for="form-stacked-text">' + (element['placeholder'] == '' ? 'Untitled Question' : element['placeholder']) + '\n\t\t\t\t\t\t\t\t<span style="color:red;">' + (element['required'] == true ? '*' : '') + '</span>\n\t\t\t\t\t\t\t</label>\n\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t<input id="' + element['key'] + '_finalFormElement" class="uk-input" id="form-stacked-text" type="text" placeholder="Some text...">\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t';
+								legitForm.appendChild(formDiv);
+								if (element['required'] == true) {
+									var formElement = document.getElementById(element['key'] + '_finalFormElement');
+									formElement.addEventListener('keyup', function (event) {
+										if (formElement.value.trim() == '') {
+											event.target.classList.add('uk-form-danger');
+										} else {
+											event.target.classList.remove('uk-form-danger');
+										}
+									});
+								}
+								break;
+							// Paragraph form 
+							case 'paragraph':
+								formDiv.innerHTML = '\n\t\t\t\t\t\t\t<label class="uk-form-label" for="form-stacked-text">' + (element['placeholder'] == '' ? 'Untitled Question' : element['placeholder']) + '\n\t\t\t\t\t\t\t\t<span style="color:red;">' + (element['required'] == true ? '*' : '') + '</span>\n\t\t\t\t\t\t\t</label>\n\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t<textarea id="' + element['key'] + '_finalFormElement" class="uk-textarea" rows="5" placeholder="Textarea"></textarea>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t';
+								legitForm.appendChild(formDiv);
+								if (element['required'] == true) {
+									var formElement = document.getElementById(element['key'] + '_finalFormElement');
+									formElement.addEventListener('keyup', function (event) {
+										if (formElement.value.trim() == '') {
+											event.target.classList.add('uk-form-danger');
+										} else {
+											event.target.classList.remove('uk-form-danger');
+										}
+									});
+								}
+								break;
+							// Radio Button
+							case 'multiple_choice':
+								formDiv.innerHTML = '\n\t\t\t\t\t\t\t<div class="uk-form-label">' + (element['placeholder'] == '' ? 'Untitled Question' : element['placeholder']) + '\n\t\t\t\t\t\t\t\t<span style="color:red;">' + (element['required'] == true ? '*' : '') + '</span>\t\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div id="preview_radio_options" class="uk-form-controls uk-form-controls-text">\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t';
+								legitForm.appendChild(formDiv);
+								var currentPreviewOptions = document.querySelector('#preview_radio_options');
+								element['options'].forEach(function (option, index) {
+									var optionLbl = document.createElement('label');
+									optionLbl.style.cssText = 'display:block';
+									optionLbl.innerHTML = '<input style="margin-right:5px;" class="uk-radio" type="radio" id="' + option['key'] + '_finalFormElement" name="' + element['key'] + '">' + (option['value'] == '' ? 'Radio ' + (index + 1) : option['value']) + '</label>';
+									currentPreviewOptions.appendChild(optionLbl);
+								});
+								break;
+							// Checkbox
+							case 'checkbox':
+								formDiv.innerHTML = '\n\t\t\t\t\t\t\t<div class="uk-form-label">' + (element['placeholder'] == '' ? 'Untitled Question' : element['placeholder']) + '\n\t\t\t\t\t\t\t\t<span style="color:red;">' + (element['required'] == true ? '*' : '') + '</span>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div id="preview_checkbox_options" class="uk-form-controls">\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t';
+								legitForm.appendChild(formDiv);
+								var currentPreviewOptions = document.querySelector('#preview_checkbox_options');
+								element['options'].forEach(function (option, index) {
+									var optionLbl = document.createElement('label');
+									optionLbl.style.cssText = 'display:block';
+									optionLbl.innerHTML = '<input style="margin-right:5px;" class="uk-checkbox" type="checkbox" name="' + option['key'] + '">' + (option['value'] == '' ? 'Radio ' + (index + 1) : option['value']) + '</label>';
+									currentPreviewOptions.appendChild(optionLbl);
+								});
+								break;
+							// Dropdown
+							case 'dropdown':
+								formDiv.innerHTML = '\n\t\t\t\t\t\t\t<label class="uk-form-label" for="form-horizontal-select">' + (element['placeholder'] == '' ? 'Untitled Question' : element['placeholder']) + '\n\t\t\t\t\t\t\t\t<span style="color:red;">' + (element['required'] == true ? '*' : '') + '</span>\n\t\t\t\t\t\t\t</label>\n\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t<select id="' + element['key'] + '_finalFormElement" class="uk-select" id="form-horizontal-select">\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t';
+								legitForm.appendChild(formDiv);
+								var currentPreviewOptions = document.querySelector('#' + element['key'] + '_finalFormElement');
+								element['options'].forEach(function (option, index) {
+									var optionLbl = document.createElement('option');
+									optionLbl.value = option['value'];
+									optionLbl.innerHTML = '' + (option['value'] == '' ? 'Option ' + (index + 1) : option['value']);
+									currentPreviewOptions.appendChild(optionLbl);
+								});
+								break;
+							// Date and time
+							case 'date':
+								break;
+						}
+					});
+	
+					var formDiv = document.createElement('div');
+					formDiv.classList.add('uk-margin');
+					formDiv.innerHTML = '\n\t\t\t\t<button id="submit_form" type="submit" class="uk-button uk-button-primary">Submit</button>\n\t\t\t';
+					legitForm.parentElement.appendChild(formDiv);
+				}
 			}
 		}, {
 			key: 'submit',
 			value: function submit() {
+				var _this2 = this;
+	
 				var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+	
+				this.formObject = {};
+				this.form = document.getElementById('legitForm');
+	
+				for (var i in this.final_form_object['formElements']) {
+					switch (this.final_form_object['formElements'][i]['controlType']) {
+						// Short text form 
+						case 'short_text':
+							var formElement = document.getElementById(this.final_form_object['formElements'][i]['key'] + '_finalFormElement');
+							if (this.final_form_object['formElements'][i]['required'] == true) {
+								if (formElement.value.trim() == '') {
+									formElement.classList.add('uk-form-danger');
+									this.formObject['element' + this.final_form_object['formElements'][i]['order']] = undefined;
+								} else {
+									this.formObject['element' + this.final_form_object['formElements'][i]['order']] = formElement.value.trim();
+								}
+							} else {
+								this.formObject['element' + this.final_form_object['formElements'][i]['order']] = formElement.value.trim();
+							}
+							break;
+						// Paragraph form 
+						case 'paragraph':
+							var formElement = document.getElementById(this.final_form_object['formElements'][i]['key'] + '_finalFormElement');
+							if (this.final_form_object['formElements'][i]['required'] == true) {
+								if (formElement.value.trim() == '') {
+									formElement.classList.add('uk-form-danger');
+									this.formObject['element' + this.final_form_object['formElements'][i]['order']] = undefined;
+								} else {
+									this.formObject['element' + this.final_form_object['formElements'][i]['order']] = formElement.value.trim();
+								}
+							} else {
+								this.formObject['element' + this.final_form_object['formElements'][i]['order']] = formElement.value.trim();
+							}
+							break;
+						// Radio Button
+						case 'multiple_choice':
+							if (this.final_form_object['formElements'][i]['required'] == true) {
+								for (var j in this.final_form_object['formElements'][i]['options']) {
+									var optionElement = document.getElementById(this.final_form_object['formElements'][i]['options'][j]['key'] + '_finalFormElement');
+									if (optionElement.checked) {
+										this.formObject['element' + this.final_form_object['formElements'][i]['order']] = this.final_form_object['formElements'][i]['options'][j]['value'];
+										break;
+									} else {
+										this.formObject['element' + this.final_form_object['formElements'][i]['order']] = undefined;
+									}
+								}
+							} else {
+								for (var j in this.final_form_object['formElements'][i]['options']) {
+									var optionElement = document.getElementById(this.final_form_object['formElements'][i]['options'][j]['key'] + '_finalFormElement');
+									if (optionElement.checked) {
+										this.formObject['element' + this.final_form_object['formElements'][i]['order']] = this.final_form_object['formElements'][i]['options'][j]['value'];
+										break;
+									} else {
+										this.formObject['element' + this.final_form_object['formElements'][i]['order']] = '';
+									}
+								}
+							}
+							break;
+						// Checkbox
+						case 'checkbox':
+							var array = [];
+							var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+							for (var j = 0; j < checkboxes.length; j++) {
+								if (checkboxes[j]['nextSibling']['nodeValue'].indexOf('Radio') > -1) {
+									array.push('');
+								} else {
+									array.push(checkboxes[j].nextSibling.nodeValue);
+								}
+							}
+							if (this.final_form_object['formElements'][i]['required'] == true) {
+								if (array.length == 0) {
+									this.formObject['element' + this.final_form_object['formElements'][i]['order']] = undefined;
+								} else {
+									this.formObject['element' + this.final_form_object['formElements'][i]['order']] = array;
+								}
+							} else {
+								this.formObject['element' + this.final_form_object['formElements'][i]['order']] = array;
+							}
+							break;
+						// Dropdown
+						case 'dropdown':
+							var formElement = document.getElementById(this.final_form_object['formElements'][i]['key'] + '_finalFormElement');
+							var option = formElement.options[formElement.selectedIndex].text;
+	
+							if (option.indexOf('Option') > -1) {
+								option = '';
+								if (this.final_form_object['formElements'][i]['required'] == true) {
+									if (option.trim() == '') {
+										this.formObject['element' + this.final_form_object['formElements'][i]['order']] = undefined;
+									} else {
+										this.formObject['element' + this.final_form_object['formElements'][i]['order']] = option.trim();
+									}
+								} else {
+									this.formObject['element' + this.final_form_object['formElements'][i]['order']] = option.trim();
+								}
+							} else {
+								if (this.final_form_object['formElements'][i]['required'] == true) {
+									if (option.trim() == '') {
+										this.formObject['element' + this.final_form_object['formElements'][i]['order']] = undefined;
+									} else {
+										this.formObject['element' + this.final_form_object['formElements'][i]['order']] = option.trim();
+									}
+								} else {
+									this.formObject['element' + this.final_form_object['formElements'][i]['order']] = option.trim();
+								}
+							}
+							break;
+					}
+				}
+	
+				console.log(this.formObject);
+				var arrTwist = [];
+				Object.keys(this.formObject).forEach(function (key) {
+					if (_this2.formObject[key] == undefined) {
+						arrTwist.push(key);
+					}
+				});
+				if (arrTwist.length > 0) {
+					alert('Required Field(s) Empty!');
+				} else {
+					this.getFinalFormValues();
+				}
 			}
 		}, {
-			key: 'getFormObject',
-			value: function getFormObject() {
-				return this.idf_form_object;
+			key: 'getFinalFormValues',
+			value: function getFinalFormValues() {
+				var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+	
+				return this.formObject;
 			}
 		}]);
 	
