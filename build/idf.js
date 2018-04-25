@@ -98,7 +98,7 @@ window["idf"] =
 					};
 	
 					// Add form title field with floating button
-					this.selector.innerHTML = '\n\t\t\t\t<div class="uk-container">\n\t\t\t\t<div uk-alert>\n\t\t\t\t\tALERT: Select Question Field To Edit \n\t\t\t\t</div>\n\t\t\t\t\t<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">\n\t\t\t\t\t\t<div id="formElements">\n\t\t\t\t\t\t\t<div id="form_title_parent">\n\t\t\t\t\t\t\t\t<div id="form_title" class="uk-card uk-card-default uk-card-body inactive">\n\t\t\t\t\t\t\t\t\t<form id="title-form" class="uk-form-horizontal uk-margin-large">\n\t\t\t\t\t\t\t\t\t\t<div class="uk-margin">\n\t\t\t\t\t\t\t\t\t\t\t<label class="uk-form-label" for="form-horizontal-text">Form Name</label>\n\t\t\t\t\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t\t\t\t\t<input class="uk-input" id="form-input" type="text" placeholder="Please Enter Form Name...">\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t\t\t\t<div class="uk-margin hidden">\n\t\t\t\t\t\t\t\t\t\t<h1 id="form-title-preview">Untitled form</h1>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<a id="idf_add_btn" class="float" uk-tooltip="title: Add Question; pos: bottom">\n\t\t\t\t\t\t<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE145;</i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a id="idf_submit_btn" class="float-left" uk-tooltip="title: Submit Form; pos: bottom">\n\t\t\t\t\t\t<i style="margin-top: 15px;font-size: 30px;" class="material-icons">&#xE876;</i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t';
+					this.selector.innerHTML = '\n\t\t\t\t<div id="form-container" class="uk-container">\n\t\t\t\t\t<div uk-alert>\n\t\t\t\t\t\tALERT: Select Question Field To Edit \n\t\t\t\t\t</div>\n\t\t\t\t\t<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">\n\t\t\t\t\t\t<div id="formElements">\n\t\t\t\t\t\t\t<div id="form_title_parent">\n\t\t\t\t\t\t\t\t<div id="form_title" class="uk-card uk-card-default uk-card-body inactive">\n\t\t\t\t\t\t\t\t\t<form id="title-form" class="uk-form-horizontal uk-margin-large">\n\t\t\t\t\t\t\t\t\t\t<div class="uk-margin">\n\t\t\t\t\t\t\t\t\t\t\t<label class="uk-form-label" for="form-horizontal-text">Form Name</label>\n\t\t\t\t\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t\t\t\t\t<input class="uk-input" id="form-input" type="text" placeholder="Please Enter Form Name...">\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t\t\t\t<div class="uk-margin hidden">\n\t\t\t\t\t\t\t\t\t\t<h1 id="form-title-preview">Untitled form</h1>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<a id="idf_add_btn" class="float" uk-tooltip="title: Add Question; pos: bottom">\n\t\t\t\t\t\t<i style="margin-top: 20px;font-size: 20px;" class="material-icons">&#xE145;</i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a id="idf_submit_btn" class="float-left" uk-tooltip="title: Submit Form; pos: bottom">\n\t\t\t\t\t\t<i style="margin-top: 20px;font-size: 20px;" class="material-icons">&#xE876;</i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a id="idf_preview_btn" class="float-top-right" uk-tooltip="title: Preview; pos: bottom">\n\t\t\t\t\t\t<i style="margin-top: 20px;font-size: 20px;" class="material-icons">&#xE8F4;</i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t';
 	
 					// make each added question editable
 					var editQuestion = function editQuestion(event) {
@@ -149,6 +149,105 @@ window["idf"] =
 						formTitlePreview.innerHTML = event.target.value;
 					});
 	
+					// Preview button event
+					this.idf_preview_btn = document.getElementById('idf_preview_btn');
+					this.idf_preview_btn.addEventListener('click', function (event) {
+						var container = document.getElementById('form-container');
+						container.classList.add('hidden');
+	
+						var loader = document.createElement('div');
+						loader.id = 'loader';
+						loader.classList.add('wrapper', 'animated', 'fadeIn');
+						loader.innerHTML = '\n\t\t\t\t\t<ul class="loader-list">\n\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t<div class="loader center"><span></span></div>\n\t\t\t\t\t\t</li>\n\t\t\t\t\t</ul>\n\t\t\t\t';
+						container.parentElement.appendChild(loader);
+	
+						var preview_form = document.createElement('div');
+						preview_form.id = 'form-preview';
+						preview_form.classList.add('uk-container');
+	
+						// Intial preview DOM element
+						preview_form.innerHTML = '\n\t\t\t\t\t<div uk-alert>\n\t\t\t\t\t\tALERT: Form Preview \n\t\t\t\t\t</div>\n\t\t\t\t\t<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">\n\t\t\t\t\t\t<div class="uk-first-column">\n\t\t\t\t\t\t\t<div class="uk-card uk-card-default uk-card-body">\n\t\t\t\t\t\t\t\t<form id="previewForm" class="uk-form-stacked">\n\t\t\t\t\t\t\t\t\t<fieldset class="uk-fieldset">\n\t\t\t\t\t\t\t\t\t\t<legend class="uk-legend">' + (_this.idf_form_object['title'] == '' ? 'Untitled Form' : _this.idf_form_object['title']) + '</legend>\n\t\t\t\t\t\t\t\t\t</fieldset>\n\t\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t';
+						container.parentElement.appendChild(preview_form);
+	
+						// change prevew DOM according to formElement controlType
+						var previewForm = document.getElementById('previewForm');
+						_this.idf_form_object['formElements'].forEach(function (element) {
+							var formDiv = document.createElement('div');
+							formDiv.classList.add('uk-margin');
+							formDiv.id = element['key'];
+							switch (element['controlType']) {
+								// Short text form 
+								case 'short_text':
+									formDiv.innerHTML = '\n\t\t\t\t\t\t\t\t<label class="uk-form-label" for="form-stacked-text">' + (element['placeholder'] == '' ? 'Untitled Question' : element['placeholder']) + '</label>\n\t\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t\t<input class="uk-input" id="form-stacked-text" type="text" placeholder="Some text...">\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t';
+									previewForm.appendChild(formDiv);
+									break;
+								// Paragraph form 
+								case 'paragraph':
+									formDiv.innerHTML = '\n\t\t\t\t\t\t\t\t<label class="uk-form-label" for="form-stacked-text">' + (element['placeholder'] == '' ? 'Untitled Question' : element['placeholder']) + '</label>\n\t\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t\t<textarea class="uk-textarea" rows="5" placeholder="Textarea"></textarea>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t';
+									previewForm.appendChild(formDiv);
+									break;
+								// Radio Button
+								case 'multiple_choice':
+									formDiv.innerHTML = '\n\t\t\t\t\t\t\t\t<div class="uk-form-label">' + (element['placeholder'] == '' ? 'Untitled Question' : element['placeholder']) + '</div>\n\t\t\t\t\t\t\t\t<div id="preview_radio_options" class="uk-form-controls uk-form-controls-text">\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t';
+									previewForm.appendChild(formDiv);
+									var currentPreviewOptions = document.querySelector('#preview_radio_options');
+									element['options'].forEach(function (option, index) {
+										var optionLbl = document.createElement('label');
+										optionLbl.style.cssText = 'display:block';
+										optionLbl.innerHTML = '<input style="margin-right:5px;" class="uk-radio" type="radio" name="' + option['key'] + '">' + (option['value'] == '' ? 'Radio ' + (index + 1) : option['value']) + '</label>';
+										currentPreviewOptions.appendChild(optionLbl);
+									});
+									break;
+								// Checkbox
+								case 'checkbox':
+									formDiv.innerHTML = '\n\t\t\t\t\t\t\t\t<div class="uk-form-label">' + (element['placeholder'] == '' ? 'Untitled Question' : element['placeholder']) + '</div>\n\t\t\t\t\t\t\t\t<div id="preview_checkbox_options" class="uk-form-controls">\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t';
+									previewForm.appendChild(formDiv);
+									var currentPreviewOptions = document.querySelector('#preview_checkbox_options');
+									element['options'].forEach(function (option, index) {
+										var optionLbl = document.createElement('label');
+										optionLbl.style.cssText = 'display:block';
+										optionLbl.innerHTML = '<input style="margin-right:5px;" class="uk-checkbox" type="checkbox" name="' + option['key'] + '">' + (option['value'] == '' ? 'Radio ' + (index + 1) : option['value']) + '</label>';
+										currentPreviewOptions.appendChild(optionLbl);
+									});
+									break;
+								// Dropdown
+								case 'dropdown':
+									formDiv.innerHTML = '\n\t\t\t\t\t\t\t\t<label class="uk-form-label" for="form-horizontal-select">' + (element['placeholder'] == '' ? 'Untitled Question' : element['placeholder']) + '</label>\n\t\t\t\t\t\t\t\t<div class="uk-form-controls">\n\t\t\t\t\t\t\t\t\t<select id="preview_select_options" class="uk-select" id="form-horizontal-select">\n\t\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t';
+									previewForm.appendChild(formDiv);
+									var currentPreviewOptions = document.querySelector('#preview_select_options');
+									element['options'].forEach(function (option, index) {
+										var optionLbl = document.createElement('option');
+										optionLbl.innerHTML = '' + (option['value'] == '' ? 'Option ' + (index + 1) : option['value']);
+										currentPreviewOptions.appendChild(optionLbl);
+									});
+									break;
+								// Date and time
+								case 'date':
+									break;
+							}
+						});
+	
+						// remover loader content from DOM
+						loader.classList.remove('fadeIn');
+						loader.classList.add('fadeOut');
+						setTimeout(function () {
+							container.parentElement.removeChild(loader);
+						}, 1000);
+	
+						setTimeout(function () {
+							var bach_btn = document.createElement('div');
+							bach_btn.innerHTML = '\n\t\t\t\t\t\t<a id="idf_back_btn" class="float-top-left" uk-tooltip="title: Back; pos: right">\n\t\t\t\t\t\t\t<i style="margin-top: 20px;font-size: 20px;" class="material-icons">&#xE5C4;</i>\n\t\t\t\t\t\t</a>\n\t\t\t\t\t';
+							preview_form.appendChild(bach_btn);
+							// change back to Edit view
+							var backBtn = document.getElementById('idf_back_btn');
+							backBtn.addEventListener('click', function (event) {
+								var container = document.getElementById('form-container');
+								container.parentElement.removeChild(preview_form);
+								container.classList.remove('hidden');
+							});
+						}, 1000);
+					});
+	
 					this.idf_add_btn = document.getElementById('idf_add_btn');
 					this.idf_add_btn.addEventListener('click', function (event) {
 						_this.div_form = document.getElementById('formElements');
@@ -157,7 +256,7 @@ window["idf"] =
 							key: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
 							label: '',
 							value: '',
-							controlType: '',
+							controlType: 'short_text',
 							type: '',
 							required: false,
 							order: _this.idf_form_object['formElements'].length + 1,
@@ -827,13 +926,20 @@ window["idf"] =
 				return this.selector, this.idf_form_object;
 			}
 		}, {
+			key: 'create',
+			value: function create() {
+				var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+	
+				console.log(content);
+			}
+		}, {
 			key: 'submit',
 			value: function submit() {
 				var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-	
-				// document.getElementById(`idf_submit_btn`).addEventListener('click', (event) => {
-				// 	return this.idf_form_object;
-				// });
+			}
+		}, {
+			key: 'getFormObject',
+			value: function getFormObject() {
 				return this.idf_form_object;
 			}
 		}]);
