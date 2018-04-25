@@ -3,7 +3,6 @@
 // import styles from '../style.css'
 import UIkit from 'uikit';
 
-
 class idf {
 	constructor(selector) {
 		this.selector = document.querySelector(selector);
@@ -116,11 +115,7 @@ class idf {
 				formTitlePreview.innerHTML = event.target.value;
 			});
 
-			this.idf_submit_btn = document.getElementById('idf_submit_btn');
-			this.idf_submit_btn.addEventListener('click', (event) => {
-				console.log(this.idf_form_object);
-			});
-
+			// Preview button event
 			this.idf_preview_btn = document.getElementById('idf_preview_btn');
 			this.idf_preview_btn.addEventListener('click', (event) => {
 				var container = document.getElementById('form-container');
@@ -1300,11 +1295,127 @@ class idf {
 		return this.selector, this.idf_form_object;
 	}
 
+	getFormObject() {
+		return this.idf_form_object;
+	}
+
+	create(content = null) {
+		console.log(content);
+
+		if (content != null) {
+			var idf_form_object = content;
+
+			this.selector.innerHTML = `
+				
+			`;
+			var legitForm = document.createElement('div');
+			legitForm.id = 'legit_form';
+			legitForm.classList.add('uk-container');
+
+			// Intial preview DOM element
+			legitForm.innerHTML = `
+				<div uk-alert>
+					ALERT: Please Fill the Form Below 
+				</div>
+				<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">
+					<div class="uk-first-column">
+						<div class="uk-card uk-card-default uk-card-body">
+							<form id="legitForm" class="uk-form-stacked">
+								<fieldset class="uk-fieldset">
+									<legend class="uk-legend">${ idf_form_object['title'] == '' ? 'Untitled Form' : idf_form_object['title'] }</legend>
+								</fieldset>
+							</form>
+						</div>
+					</div>
+				</div>
+			`;
+			this.selector.appendChild(legitForm);
+
+			var legitForm = document.getElementById('legitForm');
+			idf_form_object['formElements'].forEach((element) => {
+				var formDiv = document.createElement('div');
+				formDiv.classList.add('uk-margin');
+				formDiv.id = element['key'];
+				switch (element['controlType']) {
+					// Short text form 
+					case 'short_text':	
+						formDiv.innerHTML = `
+							<label class="uk-form-label" for="form-stacked-text">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</label>
+							<div class="uk-form-controls">
+								<input class="uk-input" id="form-stacked-text" type="text" placeholder="Some text...">
+							</div>
+						`;	
+						legitForm.appendChild(formDiv);
+					break;
+					// Paragraph form 
+					case 'paragraph':
+						formDiv.innerHTML = `
+							<label class="uk-form-label" for="form-stacked-text">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</label>
+							<div class="uk-form-controls">
+								<textarea class="uk-textarea" rows="5" placeholder="Textarea"></textarea>
+							</div>
+						`;
+						legitForm.appendChild(formDiv);
+					break;	
+					// Radio Button
+					case 'multiple_choice':
+						formDiv.innerHTML = `
+							<div class="uk-form-label">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</div>
+							<div id="preview_radio_options" class="uk-form-controls uk-form-controls-text">
+							</div>
+						`;
+						legitForm.appendChild(formDiv);
+						var currentPreviewOptions = document.querySelector(`#preview_radio_options`);
+						element['options'].forEach((option, index) => {
+							var optionLbl = document.createElement('label');
+							optionLbl.style.cssText = 'display:block';
+							optionLbl.innerHTML = `<input style="margin-right:5px;" class="uk-radio" type="radio" name="${ element['key'] }">${ option['value'] == '' ? 'Radio ' + (index + 1)  : option['value'] }</label>`;
+							currentPreviewOptions.appendChild(optionLbl);
+						});
+					break;
+					// Checkbox
+					case 'checkbox':
+						formDiv.innerHTML = `
+							<div class="uk-form-label">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</div>
+							<div id="preview_checkbox_options" class="uk-form-controls">
+							</div>
+						`;
+						legitForm.appendChild(formDiv);
+						var currentPreviewOptions = document.querySelector(`#preview_checkbox_options`);
+						element['options'].forEach((option, index) => {
+							var optionLbl = document.createElement('label');
+							optionLbl.style.cssText = 'display:block';
+							optionLbl.innerHTML = `<input style="margin-right:5px;" class="uk-checkbox" type="checkbox" name="${ option['key'] }">${ option['value'] == '' ? 'Radio ' + (index + 1)  : option['value'] }</label>`;
+							currentPreviewOptions.appendChild(optionLbl);
+						});
+					break;
+					// Dropdown
+					case 'dropdown':
+						formDiv.innerHTML = `
+							<label class="uk-form-label" for="form-horizontal-select">${ element['placeholder'] == '' ? 'Untitled Question' : element['placeholder'] }</label>
+							<div class="uk-form-controls">
+								<select id="preview_select_options" class="uk-select" id="form-horizontal-select">
+								</select>
+							</div>
+						`;
+						legitForm.appendChild(formDiv);
+						var currentPreviewOptions = document.querySelector(`#preview_select_options`);							
+						element['options'].forEach((option, index) => {
+							var optionLbl = document.createElement('option');
+							optionLbl.innerHTML = `${ option['value'] == '' ? 'Option ' + (index + 1)  : option['value'] }`;
+							currentPreviewOptions.appendChild(optionLbl);
+						});
+					break;
+					// Date and time
+					case 'date':
+					break;					
+				}
+			});
+		}
+	}
+
 	submit(content = null) {
-		// document.getElementById(`idf_submit_btn`).addEventListener('click', (event) => {
-		// 	return this.idf_form_object;
-		// });
-		return this.idf_form_object
+
 	}
 }
 
