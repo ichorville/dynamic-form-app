@@ -32,7 +32,7 @@
 
 			var previewForm = idf('#formInit');
 
-			previewForm.create();
+			// previewForm.create();
 
 			this.idf_submit_btn = document.getElementById('idf_submit_btn');
 			this.idf_submit_btn.addEventListener('click', (event) => {	
@@ -43,7 +43,16 @@
 				var formElements = JSON.parse(localStorage.getItem('formObject'));
 
 				previewForm.create(formElements);
+				addSubmitEventListener();
 			});
+
+			function addSubmitEventListener() {
+				this.submit_form = document.getElementById('submit_form');
+				this.submit_form.addEventListener('click', (event) => {
+					var formElements = JSON.parse(localStorage.getItem('formObject'));
+					previewForm.submit();
+				});
+			}
 		</script>
 	</body>
 </html>
