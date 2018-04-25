@@ -5,20 +5,45 @@
 		<title></title>
 		<link rel="stylesheet" href="node_modules/uikit/dist/css/uikit.min.css">
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="style.css">
 	</head>
 
 	<body>
-		<div class="">Hello World</div>
-		<link rel="stylesheet" href="style.css">
+		<main>
+			<input class="tab-radio" id="tab1" type="radio" name="tabs" checked>
+			<label class="tab-label" for="tab1">Form Editor</label>
+				
+			<input class="tab-radio" id="tab2" type="radio" name="tabs">
+			<label class="tab-label" for="tab2">Form Actions</label>
+				
+			<section id="content1">
+				<div id="formCreator">Hello World</div>
+			</section>
+			
+			<section id="content2">
+				<div id="formInit">Hello World</div>
+			</section>
+		</main>
 		<script src="build/idf.min.js" charset="utf-8"></script>
 		<script type="text/javascript">
-			console.log(idf('div'));
-			console.log(idf('div').html());
-			idf('div').html('Altered Text');
+		
+			var idfObj = idf('#formCreator');
+			idfObj.init();
 
-			// intialise idf functionality
-			idf('div').init();
-			idf('div').submit();
+			var previewForm = idf('#formInit');
+
+			previewForm.create();
+
+			this.idf_submit_btn = document.getElementById('idf_submit_btn');
+			this.idf_submit_btn.addEventListener('click', (event) => {	
+				var formObj = idfObj.getFormObject();
+				
+				localStorage.setItem('formObject', JSON.stringify(formObj));
+				
+				var formElements = JSON.parse(localStorage.getItem('formObject'));
+
+				previewForm.create(formElements);
+			});
 		</script>
 	</body>
 </html>
