@@ -26,22 +26,26 @@
 		</main>
 		<script src="build/idf.min.js" charset="utf-8"></script>
 		<script type="text/javascript">
-		
+			// intialize library with selector
 			var idfObj = idf('#formCreator');
+			// enable form editor mode
 			idfObj.init();
 
+			// intialise library with selector
 			var previewForm = idf('#formInit');
 
-			// previewForm.create();
-
+			// custom click event to derive form editor Form values
 			this.idf_submit_btn = document.getElementById('idf_submit_btn');
 			this.idf_submit_btn.addEventListener('click', (event) => {	
 				var formObj = idfObj.getFormObject();
 				
+				// store formElemets in localStorage; a simple data storage technique 
+				// used momentarily
 				localStorage.setItem('formObject', JSON.stringify(formObj));
 				
 				var formElements = JSON.parse(localStorage.getItem('formObject'));
 
+				// pass form editor Form values to create the final functionaing Form
 				previewForm.create(formElements);
 				addSubmitEventListener();
 			});
@@ -50,6 +54,7 @@
 				this.submit_form = document.getElementById('submit_form');
 				this.submit_form.addEventListener('click', (event) => {
 					var formElements = JSON.parse(localStorage.getItem('formObject'));
+					// Final Form submit event
 					previewForm.submit();
 				});
 			}

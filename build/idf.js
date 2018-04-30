@@ -946,7 +946,7 @@ window["idf"] =
 					legitForm.classList.add('uk-container');
 	
 					// Intial preview DOM element
-					legitForm.innerHTML = '\n\t\t\t\t<div uk-alert>\n\t\t\t\t\tALERT: Please Fill the Form Below \n\t\t\t\t</div>\n\t\t\t\t<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">\n\t\t\t\t\t<div class="uk-first-column">\n\t\t\t\t\t\t<div class="uk-card uk-card-default uk-card-body">\n\t\t\t\t\t\t\t<form id="legitForm" class="uk-form-stacked">\n\t\t\t\t\t\t\t\t<fieldset class="uk-fieldset">\n\t\t\t\t\t\t\t\t\t<legend class="uk-legend">' + (this.final_form_object['title'] == '' ? 'Untitled Form' : idf_form_object['title']) + '</legend>\n\t\t\t\t\t\t\t\t</fieldset>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t';
+					legitForm.innerHTML = '\n\t\t\t\t<div uk-alert>\n\t\t\t\t\tALERT: Please Fill the Form Below \n\t\t\t\t</div>\n\t\t\t\t<div class="uk-child-width-expand@s" uk-grid style="margin-bottom: 20px;padding-bottom: 100px;">\n\t\t\t\t\t<div class="uk-first-column">\n\t\t\t\t\t\t<div class="uk-card uk-card-default uk-card-body">\n\t\t\t\t\t\t\t<form id="legitForm" class="uk-form-stacked">\n\t\t\t\t\t\t\t\t<fieldset class="uk-fieldset">\n\t\t\t\t\t\t\t\t\t<legend class="uk-legend">' + (this.final_form_object['title'] == '' ? 'Untitled Form' : this.final_form_object['title']) + '</legend>\n\t\t\t\t\t\t\t\t</fieldset>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t';
 					this.selector.appendChild(legitForm);
 	
 					var legitForm = document.getElementById('legitForm');

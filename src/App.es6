@@ -1322,7 +1322,7 @@ class idf {
 						<div class="uk-card uk-card-default uk-card-body">
 							<form id="legitForm" class="uk-form-stacked">
 								<fieldset class="uk-fieldset">
-									<legend class="uk-legend">${ this.final_form_object['title'] == '' ? 'Untitled Form' : idf_form_object['title'] }</legend>
+									<legend class="uk-legend">${ this.final_form_object['title'] == '' ? 'Untitled Form' : this.final_form_object['title'] }</legend>
 								</fieldset>
 							</form>
 						</div>
